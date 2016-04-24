@@ -1,0 +1,35 @@
+<?php
+
+namespace {#namespace#};
+
+use AppserverIo\Psr\Servlet\Http\HttpServlet;
+use AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface;
+use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
+
+/**
+ * This is the '{#servlet#}' servlet implementation.
+ *
+ * @Route(name="{#route#}",
+ *        urlPattern={"/{#route#}.do", "/{#route#}.do*"})
+ */
+class {#servlet#} extends HttpServlet
+{
+
+    /**
+     * Handles a HTTP GET request.
+     *
+     * @param \AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface $servletRequest
+     *   The request instance
+     * @param \AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface $servletResponse
+     *   The response instance
+     *
+     * @return void
+     * @see \AppserverIo\Psr\Servlet\Http\HttpServlet::doGet()
+     */
+    public function doGet(
+        HttpServletRequestInterface $servletRequest,
+        HttpServletResponseInterface $servletResponse
+    ) {
+        $servletResponse->appendBodyStream('{#servlet#}');
+    }
+}
