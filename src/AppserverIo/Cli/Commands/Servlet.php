@@ -3,18 +3,23 @@
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ServletCommand
+ * Servlet
  *
  * @author Martin Mohr <mohrwurm@gmail.com>
- * @since 23.04.16
+ * @copyright 2015 TechDivision GmbH <info@appserver.io>
+ * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link https://github.com/mohrwurm/appserver-io-cli
+ * @link http://www.appserver.io
+ * @since 30.04.16
+ *
+ * TODO rewrite
  */
-class ServletCommand extends Command
+class Servlet extends Command
 {
 
     /**

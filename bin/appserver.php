@@ -2,29 +2,32 @@
 <?php
 // appserver.php
 
-$autoloadFiles = array(
-    __DIR__ . '/../bootstrap.php',
-    __DIR__ . '/../../../../bootstrap.php',
-    __DIR__ . '/../../../autoload.php'
-);
+define('APPSERVER_BP', realpath(__DIR__ . '/../../../../'));
 
-foreach ($autoloadFiles as $autoloadFile) {
-    if (file_exists($autoloadFile)) {
-        require_once $autoloadFile;
+// bootstrap the application
+$bootstrap = APPSERVER_BP . DIRECTORY_SEPARATOR . 'var' . DIRECTORY_SEPARATOR . 'scripts' . DIRECTORY_SEPARATOR . 'bootstrap.php';
+if (file_exists($bootstrap)) {
+    require $bootstrap;
+} else {
+    $autoloadFiles = array(
+        __DIR__ . '/../bootstrap.php',
+        __DIR__ . '/../../../../bootstrap.php',
+        __DIR__ . '/../../../autoload.php'
+    );
+
+    foreach ($autoloadFiles as $autoloadFile) {
+        if (file_exists($autoloadFile)) {
+            require_once $autoloadFile;
+        }
     }
 }
 
-use Symfony\Component\Console\Application;
-use AppserverIo\Cli\Commands\ServerConfig;
-use AppserverIo\Cli\Commands\ServerCommand;
-use AppserverIo\Cli\Commands\ServerParameterCommand;
-use AppserverIo\Cli\Commands\ServerRestartCommand;
-use AppserverIo\Cli\Commands\ServletCommand;
+use AppserverIo\Cli\Commands\Config;
+use AppserverIo\Cli\Commands\Server;
+use AppserverIo\Cli\Commands\Servlet;
 
-$application = new Application();
-$application->add(new ServerConfig());
-$application->add(new ServerCommand());
-$application->add(new ServerParameterCommand());
-$application->add(new ServerRestartCommand());
-$application->add(new ServletCommand());
+$application = new \AppserverIo\Cli\Console();
+$application->add(new Config());
+$application->add(new Server());
+$application->add(new Servlet());
 $application->run();
