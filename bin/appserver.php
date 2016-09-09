@@ -25,9 +25,12 @@ if (file_exists($bootstrap)) {
 use AppserverIo\Cli\Commands\Config;
 use AppserverIo\Cli\Commands\Server;
 use AppserverIo\Cli\Commands\Servlet;
+use AppserverIo\Cli\Commands\ApplicationConfig;
+
 
 $application = new \AppserverIo\Cli\Console();
 $application->add(new Config());
 $application->add(new Server());
 $application->add(new Servlet());
+$application->add(new ApplicationConfig());
 $application->run();

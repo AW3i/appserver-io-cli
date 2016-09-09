@@ -16,19 +16,23 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ConfigCommand extends Command
+class ApplicationConfig extends Command
 {
+
+    const WEB = 'web.xml';
+    const CONTEXT = 'context.xml';
+    const POINTCUTS = 'pointcuts.xml';
 
     /**
      * Configures the current command.
      */
     protected function configure()
     {
-        $this->setName('appserver:config')
+        $this->setName('appserver:appconfig')
             ->setDescription('Create appserver.io Config')
-            ->addOption('namespace', 'c', InputOption::VALUE_REQUIRED, 'config namespace')
-            ->addOption('config', 's', InputOption::VALUE_REQUIRED, 'config name')
+            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'file to create available options are: all, web, context, pointcuts', 'all')
             ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'config route')
+            ->addOption('application-name', 'an', InputOption::VALUE_OPTIONAL, 'config application name', 'example')
             ->addOption('directory', 'd', InputOption::VALUE_OPTIONAL, 'webapps root directory', '/opt/appserver/webapps/example');
     }
 
@@ -51,22 +55,12 @@ class ConfigCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $namespace = $input->getOption('namespace');
-        $config = $input->getOption('config');
-        $route = $input->getOption('route');
         $rootDirectory = $input->getOption('directory');
-
-        $contextXmlTemplate = __DIR__ . '/../../../../tpl/context.xml.template';
-        $webXmlTemplate = __DIR__ . '/../../../../tpl/context.xml.template';
-        $pointcutsXmlTemplate = __DIR__ . '/../../../../tpl/context.xml.template';
-
+        $route = $input->getOption('route');
+        $applicationName = $input->getOption('application-name');
+        $configFile = $input->getOption('file');
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF';
         $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . 'META-INF';
-
-        if (null !== $namespace) {
-            $filePath = str_replace(['\\', '\\\\', '_'], DIRECTORY_SEPARATOR, $namespace);
-            $webInf .= DIRECTORY_SEPARATOR . $filePath;
-        }
 
         if (!is_dir($webInf)) {
             mkdir($webInf, 0777, true);
@@ -76,46 +70,73 @@ class ConfigCommand extends Command
             mkdir($metaInf, 0777, true);
         }
 
-        $searchContextXml = [
-            '{#namespace#}',
-            '{#config#}',
-            '{#route#}',
-        ];
-        $replaceContextXml = [
-            $namespace,
-            $config,
-            $route
-        ];
-        $contextXmlTemplateString = str_replace($searchContextXml, $replaceContextXml, file_get_contents($contextXmlTemplate));
-        $configContextXmlFile = $metaInf . DIRECTORY_SEPARATOR . $config . '.xml';
-        file_put_contents($configContextXmlFile, $contextXmlTemplateString);
-
-        $searchWebXml = [
-            '{#namespace#}',
-            '{#config#}',
-            '{#route#}',
-        ];
-        $replaceWebXml = [
-            $namespace,
-            $config,
-            $route
-        ];
-        $webXmlTemplateString = str_replace($searchWebXml, $replaceWebXml, file_get_contents($webXmlTemplate));
-        $configWebXmlFile = $webInf . DIRECTORY_SEPARATOR . $config . '.xml';
-        file_put_contents($configWebXmlFile, $webXmlTemplateString);
-
-        $searchPointcutsXml = [
-            '{#namespace#}',
-            '{#config#}',
-            '{#route#}',
-        ];
-        $replacePointcutsXml = [
-            $namespace,
-            $config,
-            $route
-        ];
-        $pointcutsXmlTemplateString = str_replace($searchPointcutsXml, $replacePointcutsXml, file_get_contents($pointcutsXmlTemplate));
-        $configPointcutsXmlFile = $webInf . DIRECTORY_SEPARATOR . $config . '.xml';
-        file_put_contents($configPointcutsXmlFile, $pointcutsXmlTemplateString);
+        if($configFile === 'all') {
+            $this->addWebXml($webInf, $route, $applicationName);
+            $this->addContextXml($metaInf, $route, $applicationName);
+            $this->addPointcutsXml($webInf, $route, $applicationName);
+        }
+        if($configFile === 'web') {
+            $this->addWebXml($webInf, $route, $applicationName);
+        }
+        if($configFile === 'context') {
+            $this->addContextXml($metaInf, $route, $applicationName);
+        }
+        if($configFile === 'pointcuts') {
+            $this->addPointcutsXml($webInf, $route, $applicationName);
+        }
     }
+
+    protected function addWebXml($directory, $route, $applicationName) {
+
+        $template = __DIR__ . '/../../../../tpl/web.xml';
+
+        $search = [
+            '{#application-name#}',
+            '{#route#}',
+        ];
+        $replace = [
+            $applicationName,
+            $route
+        ];
+
+        $templateString = str_replace($search, $replace, file_get_contents($template));
+        $file = $directory . DIRECTORY_SEPARATOR . self::WEB;
+        file_put_contents($file, $templateString);
+    }
+
+    protected function addContextXml($directory, $route, $applicationName) {
+        $template = __DIR__ . '/../../../../tpl/context.xml';
+
+        $search = [
+            '{#application-name#}',
+            '{#route#}',
+        ];
+        $replace = [
+            $applicationName,
+            $route
+        ];
+
+        $templateString = str_replace($search, $replace, file_get_contents($template));
+        $file = $directory . DIRECTORY_SEPARATOR . self::CONTEXT;
+        file_put_contents($file, $templateString);
+    }
+
+    protected function addPointcutsXml($directory, $route, $applicationName) {
+
+        $template = __DIR__ . '/../../../../tpl/pointcuts.xml';
+
+        $search = [
+            '{#application-name#}',
+            '{#route#}',
+        ];
+        $replace = [
+            $applicationName,
+            $route
+        ];
+
+        $templateString = str_replace($search, $replace, file_get_contents($template));
+        $file = $directory . DIRECTORY_SEPARATOR . self::POINTCUTS;
+        file_put_contents($file, $templateString);
+    }
+
 }
