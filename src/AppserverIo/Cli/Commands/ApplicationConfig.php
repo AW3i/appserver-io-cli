@@ -30,10 +30,10 @@ class ApplicationConfig extends Command
     {
         $this->setName('appserver:appconfig')
             ->setDescription('Create appserver.io Config')
+            ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
+            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory')
             ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'file to create available options are: all, web, context, pointcuts', 'all')
-            ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'config route')
-            ->addOption('application-name', 'an', InputOption::VALUE_OPTIONAL, 'config application name', 'example')
-            ->addOption('directory', 'd', InputOption::VALUE_OPTIONAL, 'webapps root directory', '/opt/appserver/webapps/example');
+            ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'config route');
     }
 
     /**
@@ -55,9 +55,9 @@ class ApplicationConfig extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $rootDirectory = $input->getOption('directory');
+        $rootDirectory = $input->getArgument('directory');
         $route = $input->getOption('route');
-        $applicationName = $input->getOption('application-name');
+        $applicationName = $input->getArgument('application-name');
         $configFile = $input->getOption('file');
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF';
         $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . 'META-INF';
