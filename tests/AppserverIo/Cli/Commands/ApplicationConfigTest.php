@@ -44,7 +44,6 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     public function testAddWebXmlCreatesFile()
     {
         $this->invokeMethod($this->applicationConfig, 'addWebXml', array($this->directory, $this->route, $this->applicationName, $this->namespace));
-        print_r($this->directory);
         $this->assertTrue(file_exists($this->directory . self::WEB));
     }
 
