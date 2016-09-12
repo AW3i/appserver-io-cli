@@ -10,7 +10,7 @@
     </session-config>
 
     <servlet>
-        <description>VideoClub login implementation</description>
+        <description>{#application-name#} login implementation</description>
         <display-name>The login servlet</display-name>
         <servlet-name>login</servlet-name>
         <servlet-class>\TechDivision\Videoclub\Servlets\LoginServlet</servlet-class>
@@ -93,7 +93,7 @@
     <!-- define the Login Configuration for this application -->
     <login-config>
         <auth-method>Form</auth-method>
-        <realm-name>{#application#}-realm</realm-name>
+        <realm-name>{#application-name#}-realm</realm-name>
         <form-login-config>
             <form-login-page>/dhtml/login.dhtml</form-login-page>
             <form-error-page>/dhtml/login.dhtml</form-error-page>

@@ -31,6 +31,7 @@ class ApplicationConfig extends Command
         $this->setName('appserver:appconfig')
             ->setDescription('Create appserver.io Config')
             ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
+            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'namespace for the project')
             ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory')
             ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'file to create available options are: all, web, context, pointcuts', 'all')
             ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'config route');
@@ -55,10 +56,16 @@ class ApplicationConfig extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $rootDirectory = $input->getArgument('directory');
-        $route = $input->getOption('route');
         $applicationName = $input->getArgument('application-name');
+        $namespace = $input->getArgument('namespace');
+        $rootDirectory = $input->getArgument('directory');
         $configFile = $input->getOption('file');
+        $route = $input->getOption('route');
+
+        if (preg_match('/\//', $namespace)) {
+            $namespace = str_replace('/', '\\', $namespace);
+        }
+
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF';
         $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . 'META-INF';
 
@@ -70,32 +77,35 @@ class ApplicationConfig extends Command
             mkdir($metaInf, 0777, true);
         }
 
-        if($configFile === 'all') {
-            $this->addWebXml($webInf, $route, $applicationName);
-            $this->addContextXml($metaInf, $route, $applicationName);
-            $this->addPointcutsXml($webInf, $route, $applicationName);
+        if ($configFile === 'all') {
+            $this->addWebXml($webInf, $route, $applicationName, $namespace);
+            $this->addContextXml($metaInf, $route, $applicationName, $namespace);
+            $this->addPointcutsXml($webInf, $route, $applicationName, $namespace);
         }
-        if($configFile === 'web') {
-            $this->addWebXml($webInf, $route, $applicationName);
+        if ($configFile === 'web') {
+            $this->addWebXml($webInf, $route, $applicationName, $namespace);
         }
-        if($configFile === 'context') {
-            $this->addContextXml($metaInf, $route, $applicationName);
+        if ($configFile === 'context') {
+            $this->addContextXml($metaInf, $route, $applicationName, $namespace);
         }
-        if($configFile === 'pointcuts') {
-            $this->addPointcutsXml($webInf, $route, $applicationName);
+        if ($configFile === 'pointcuts') {
+            $this->addPointcutsXml($webInf, $route, $applicationName, $namespace);
         }
     }
 
-    protected function addWebXml($directory, $route, $applicationName) {
-
+    protected function addWebXml($directory, $route, $applicationName, $namespace)
+    {
         $template = __DIR__ . '/../../../../tpl/web.xml';
+        $namespace = str_replace('\\', '/', $namespace);
 
         $search = [
             '{#application-name#}',
+            '{#namespace#}',
             '{#route#}',
         ];
         $replace = [
             $applicationName,
+            $namespace,
             $route
         ];
 
@@ -104,15 +114,22 @@ class ApplicationConfig extends Command
         file_put_contents($file, $templateString);
     }
 
-    protected function addContextXml($directory, $route, $applicationName) {
+    protected function addContextXml($directory, $route, $applicationName, $namespace)
+    {
         $template = __DIR__ . '/../../../../tpl/context.xml';
+
+        $namespace = strtolower($namespace);
+        $namespace = str_replace('\\', '.', $namespace);
 
         $search = [
             '{#application-name#}',
+            '{#namespace#}',
             '{#route#}',
         ];
+
         $replace = [
             $applicationName,
+            $namespace,
             $route
         ];
 
@@ -121,16 +138,19 @@ class ApplicationConfig extends Command
         file_put_contents($file, $templateString);
     }
 
-    protected function addPointcutsXml($directory, $route, $applicationName) {
-
+    protected function addPointcutsXml($directory, $route, $applicationName, $namespace)
+    {
         $template = __DIR__ . '/../../../../tpl/pointcuts.xml';
 
         $search = [
             '{#application-name#}',
+            '{#namespace#}',
             '{#route#}',
         ];
+
         $replace = [
             $applicationName,
+            $namespace,
             $route
         ];
 
@@ -138,5 +158,4 @@ class ApplicationConfig extends Command
         $file = $directory . DIRECTORY_SEPARATOR . self::POINTCUTS;
         file_put_contents($file, $templateString);
     }
-
 }

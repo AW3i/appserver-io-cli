@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 // appserver.php
 
@@ -26,7 +25,6 @@ use AppserverIo\Cli\Commands\Config;
 use AppserverIo\Cli\Commands\Server;
 use AppserverIo\Cli\Commands\Servlet;
 use AppserverIo\Cli\Commands\ApplicationConfig;
-
 
 $application = new \AppserverIo\Cli\Console();
 $application->add(new Config());

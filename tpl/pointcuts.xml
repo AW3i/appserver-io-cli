@@ -2,11 +2,11 @@
 <pointcuts xmlns="http://www.appserver.io/appserver">
     <pointcut>
         <pointcut-name>allDeleteActions</pointcut-name>
-        <pointcut-pattern>call(\AppserverIo\Apps\Example\Actions\*->deleteAction())</pointcut-pattern>
+        <pointcut-pattern>call(\{#namespace#}\Actions\*->deleteAction())</pointcut-pattern>
     </pointcut>
 
     <advice>
-        <advice-aspect>\AppserverIo\Apps\Example\Aspects\LoggerAspect</advice-aspect>
+        <advice-aspect>\{#namespace#}\Aspects\LoggerAspect</advice-aspect>
         <advice-name>logInfoAdvice</advice-name>
         <advice-type>Before</advice-type>
         <advice-pointcuts>

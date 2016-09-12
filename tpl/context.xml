@@ -20,12 +20,12 @@
         </manager>
         <manager name="AuthenticationManagerInterface" type="AppserverIo\Appserver\ServletEngine\Security\StandardAuthenticationManager" factory="AppserverIo\Appserver\ServletEngine\Security\StandardAuthenticationManagerFactory">
             <securityDomains>
-                <securityDomain name="{#realm#}">
+                <securityDomain name="{#application-name#}-realm">
                     <authConfig>
                         <loginModules>
                             <loginModule type="AppserverIo\Appserver\ServletEngine\Security\Auth\Spi\DatabasePDOLoginModule" flag="required">
                                 <params>
-                                    <param name="lookupName" type="string">php:env/${container.name}/ds/techdivision.videoclub-application</param>
+                                    <param name="lookupName" type="string">php:env/${container.name}/ds/{#namespace#}-application</param>
                                     <param name="principalsQuery" type="string">select password from user where username = ?</param>
 a                                   <param name="rolesQuery" type="string">select r.name, 'Roles' from role r inner join user p on r.user_id_fk = p.id where p.username = ?</param>
                                     <param name="hashAlgorithm" type="string">sha512</param>
