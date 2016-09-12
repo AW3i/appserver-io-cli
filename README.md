@@ -1,4 +1,5 @@
 # appserver.io cli
+[![Build Status](https://travis-ci.org/AW3i/appserver-io-cli.svg?branch=aw%2Farguments)](https://travis-ci.org/AW3i/appserver-io-cli)
 
 ## appserver:server
 > action: start | stop | restart | status
@@ -34,4 +35,10 @@ $ vendor/bin/appserver appserver:config add parameter --server message-queue --p
 
 ```bash
 $ vendor/bin/appserver appserver:config remove parameter --server message-queue --param test
+```
+
+### appserver:appconfig
+
+```bash
+$vendor/bin/appserver appserver:appconfig application-name Name\\Space webapp/directory
 ```
