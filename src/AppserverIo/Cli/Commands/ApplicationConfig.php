@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use AppserverIo\Cli\Commands\Utils\Util;
 
 /**
  *
@@ -33,7 +34,6 @@ class ApplicationConfig extends Command
             ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'namespace for the project')
             ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory')
-            ->addOption('file', 'f', InputOption::VALUE_REQUIRED, 'file to create available options are: all, web, context, pointcuts', 'all')
             ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'config route');
     }
 
@@ -59,11 +59,25 @@ class ApplicationConfig extends Command
         $applicationName = $input->getArgument('application-name');
         $namespace = $input->getArgument('namespace');
         $rootDirectory = $input->getArgument('directory');
-        $configFile = $input->getOption('file');
         $route = $input->getOption('route');
 
         if (preg_match('/\//', $namespace)) {
             $namespace = str_replace('/', '\\', $namespace);
+        }
+
+        if (!is_dir($rootDirectory)) {
+            mkdir($rootDirectory, 0777, true);
+        }
+
+        $staticFilesDirectory = __DIR__ . '/../../../../templates/static';
+        if ($handle = opendir($staticFilesDirectory)) {
+            while (false !== ($file = readdir($handle))) {
+                if ($file == '.' || $file == '..' || $file == 'META-INF'|| $file == 'WEB-INF') {
+                    continue;
+                }
+                $templatefile = realpath($staticFilesDirectory) . DIRECTORY_SEPARATOR . $file;
+                Util::putFile($file, $templatefile, realpath($rootDirectory), $route, $applicationName, $namespace);
+            }
         }
 
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF';
@@ -77,85 +91,30 @@ class ApplicationConfig extends Command
             mkdir($metaInf, 0777, true);
         }
 
-        if ($configFile === 'all') {
-            $this->addWebXml($webInf, $route, $applicationName, $namespace);
-            $this->addContextXml($metaInf, $route, $applicationName, $namespace);
-            $this->addPointcutsXml($webInf, $route, $applicationName, $namespace);
-        }
-        if ($configFile === 'web') {
-            $this->addWebXml($webInf, $route, $applicationName, $namespace);
-        }
-        if ($configFile === 'context') {
-            $this->addContextXml($metaInf, $route, $applicationName, $namespace);
-        }
-        if ($configFile === 'pointcuts') {
-            $this->addPointcutsXml($webInf, $route, $applicationName, $namespace);
-        }
+        $this->addWebXml($webInf, $route, $applicationName, $namespace);
+        $this->addContextXml($metaInf, $route, $applicationName, $namespace);
+        $this->addPointcutsXml($webInf, $route, $applicationName, $namespace);
     }
 
     protected function addWebXml($directory, $route, $applicationName, $namespace)
     {
-        $template = __DIR__ . '/../../../../tpl/web.xml';
-        $namespace = str_replace('\\', '/', $namespace);
-
-        $search = [
-            '{#application-name#}',
-            '{#namespace#}',
-            '{#route#}',
-        ];
-        $replace = [
-            $applicationName,
-            $namespace,
-            $route
-        ];
-
-        $templateString = str_replace($search, $replace, file_get_contents($template));
-        $file = $directory . DIRECTORY_SEPARATOR . self::WEB;
-        file_put_contents($file, $templateString);
+        $template = __DIR__ . '/../../../../templates/static/WEB-INF/web.xml';
+        Util::putFile(self::WEB, $template, $directory, $route, $applicationName, $namespace);
     }
 
     protected function addContextXml($directory, $route, $applicationName, $namespace)
     {
-        $template = __DIR__ . '/../../../../tpl/context.xml';
+        $template = __DIR__ . '/../../../../templates/static/META-INF/context.xml';
 
         $namespace = strtolower($namespace);
         $namespace = str_replace('\\', '.', $namespace);
 
-        $search = [
-            '{#application-name#}',
-            '{#namespace#}',
-            '{#route#}',
-        ];
-
-        $replace = [
-            $applicationName,
-            $namespace,
-            $route
-        ];
-
-        $templateString = str_replace($search, $replace, file_get_contents($template));
-        $file = $directory . DIRECTORY_SEPARATOR . self::CONTEXT;
-        file_put_contents($file, $templateString);
+        Util::putFile(self::CONTEXT, $template, $directory, $route, $applicationName, $namespace);
     }
 
     protected function addPointcutsXml($directory, $route, $applicationName, $namespace)
     {
-        $template = __DIR__ . '/../../../../tpl/pointcuts.xml';
-
-        $search = [
-            '{#application-name#}',
-            '{#namespace#}',
-            '{#route#}',
-        ];
-
-        $replace = [
-            $applicationName,
-            $namespace,
-            $route
-        ];
-
-        $templateString = str_replace($search, $replace, file_get_contents($template));
-        $file = $directory . DIRECTORY_SEPARATOR . self::POINTCUTS;
-        file_put_contents($file, $templateString);
+        $template = __DIR__ . '/../../../../templates/static/WEB-INF/pointcuts.xml';
+        Util::putFile(self::POINTCUTS, $template, $directory, $route, $applicationName, $namespace);
     }
 }
