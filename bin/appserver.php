@@ -25,10 +25,12 @@ use AppserverIo\Cli\Commands\Config;
 use AppserverIo\Cli\Commands\Server;
 use AppserverIo\Cli\Commands\Servlet;
 use AppserverIo\Cli\Commands\ApplicationConfig;
+use AppserverIo\Cli\Commands\ActionCommand;
 
 $application = new \AppserverIo\Cli\Console();
 $application->add(new Config());
 $application->add(new Server());
 $application->add(new Servlet());
 $application->add(new ApplicationConfig());
+$application->add(new ActionCommand());
 $application->run();
