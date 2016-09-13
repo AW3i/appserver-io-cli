@@ -11,9 +11,6 @@
 
 namespace AppserverIo\Cli\Commands;
 
-
-namespace AppserverIo\Cli\Commands;
-
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -28,9 +25,9 @@ class ActionCommand extends Command
     protected function configure()
     {
         $this->setName('appserver:action')
-            ->setDescription('Create appserver.io Action')
+            ->setDescription('Create appserver.io ')
             ->addArgument('action-name', InputOption::VALUE_REQUIRED, 'Action Name')
-            ->addArgument('namespace',InputOption::VALUE_REQUIRED, 'action namespace')
+            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'action namespace')
             ->addArgument('path', InputOption::VALUE_REQUIRED, 'Action path')
             ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
     }
@@ -59,7 +56,7 @@ class ActionCommand extends Command
         $path = $input->getArgument('path');
         $rootDirectory = $input->getArgument('directory');
 
-        $actionTemplate = __DIR__ . '/../../../../tpl/Action.php.template';
+        $actionTemplate = __DIR__ . '/../../../../templates/Action.php.template';
 
         if (preg_match('/\//', $namespace)) {
             $namespace = str_replace('/', '\\', $namespace);
@@ -73,7 +70,7 @@ class ActionCommand extends Command
             mkdir($webInf, 0777, true);
         }
 
-        if(!is_file($indexDo)){
+        if (!is_file($indexDo)) {
             file_put_contents($indexDo, '');
         }
 

@@ -59,7 +59,7 @@ class Servlet extends Command
         $route = $input->getOption('route');
         $rootDirectory = $input->getOption('directory');
 
-        $servletTemplate = __DIR__ . '/../../../../tpl/ServletEngine.php.template';
+        $servletTemplate = __DIR__ . '/../../../../templates/ServletEngine.php.template';
 
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes';
 

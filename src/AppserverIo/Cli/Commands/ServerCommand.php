@@ -112,7 +112,7 @@ class ServerCommand extends Command
                             $templateFile = $template;
                         } else {
                             //default template file
-                            $templateFile = $servletTemplate = __DIR__ . '/../../../../tpl/server.xml';
+                            $templateFile = $servletTemplate = __DIR__ . '/../../../../templates/server.xml';
 
                         }
                         if (file_exists($templateFile)) {
