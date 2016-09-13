@@ -10,8 +10,11 @@ namespace AppserverIo\Cli\Commands\Utils;
  */
 class Util
 {
+    const DIRECTORY_SEPARATOR = '/';
+
     public static function putFile($fileName, $template, $directory, $route, $applicationName, $namespace)
     {
+        chdir($directory);
         $search = [
             '{#application-name#}',
             '{#namespace#}',
@@ -35,25 +38,22 @@ class Util
     {
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) {
-                if ($file == '.' || $file == '..') {
-                    continue;
-                }
-                echo "$file\n";
-
+                chdir($dir);
                 if (is_link($file)) {
                     continue;
                 }
-                //WEB-INF and META-INF are not found as directories, weird
-                if (is_dir($file)) {
-                    echo $file;
-                    Util::findFiles(realpath($file), $rootDirectory, $route, $applicationName, $namespace);
+                if (is_dir($file) && !($file == '.' || $file == '..')) {
+                    $recursiveDir = $dir . DIRECTORY_SEPARATOR . $file;
+                    $recursiveRoot = $rootDirectory . DIRECTORY_SEPARATOR . $file;
+                    Util::findFiles($recursiveDir, $recursiveRoot, $route, $applicationName, $namespace);
                 }
 
                 if (is_file($file)) {
                     $templatefile = realpath($dir) . DIRECTORY_SEPARATOR . $file;
-                    Util::putFile($file, $templatefile, realpath($rootDirectory), $route, $applicationName, $namespace);
+                    Util::putFile($file, $templatefile, $rootDirectory, $route, $applicationName, $namespace);
                 }
             }
         }
+        return 0;
     }
 }

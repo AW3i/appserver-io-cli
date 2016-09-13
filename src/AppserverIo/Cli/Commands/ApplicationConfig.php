@@ -64,7 +64,7 @@ class ApplicationConfig extends Command
         $rootDirectory = $input->getArgument('directory');
         $route = $input->getOption('route');
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . self::WEBINF;
-        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . self::WEBINF;
+        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . self::METAINF;
 
         //Replace slashes in namespace with backslashes
         //in case the user enters a slash
@@ -86,27 +86,5 @@ class ApplicationConfig extends Command
 
         $staticFilesDirectory = __DIR__ . '/../../../../templates/static';
         Util::findFiles($staticFilesDirectory, $rootDirectory, $route, $applicationName, $namespace);
-    }
-
-    protected function addWebXml($directory, $route, $applicationName, $namespace)
-    {
-        $template = __DIR__ . '/../../../../templates/static/WEB-INF/web.xml';
-        Util::putFile(self::WEB, $template, $directory, $route, $applicationName, $namespace);
-    }
-
-    protected function addContextXml($directory, $route, $applicationName, $namespace)
-    {
-        $template = __DIR__ . '/../../../../templates/static/META-INF/context.xml';
-
-        $namespace = strtolower($namespace);
-        $namespace = str_replace('\\', '.', $namespace);
-
-        Util::putFile(self::CONTEXT, $template, $directory, $route, $applicationName, $namespace);
-    }
-
-    protected function addPointcutsXml($directory, $route, $applicationName, $namespace)
-    {
-        $template = __DIR__ . '/../../../../templates/static/WEB-INF/pointcuts.xml';
-        Util::putFile(self::POINTCUTS, $template, $directory, $route, $applicationName, $namespace);
     }
 }
