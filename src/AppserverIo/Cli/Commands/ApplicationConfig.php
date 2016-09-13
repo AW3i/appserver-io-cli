@@ -7,6 +7,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Finder\Finder;
 use AppserverIo\Cli\Commands\Utils\Util;
 
 /**
@@ -23,6 +24,8 @@ class ApplicationConfig extends Command
     const WEB = 'web.xml';
     const CONTEXT = 'context.xml';
     const POINTCUTS = 'pointcuts.xml';
+    const WEBINF = 'WEB-INF';
+    const METAINF = 'META-INF';
 
     /**
      * Configures the current command.
@@ -60,7 +63,11 @@ class ApplicationConfig extends Command
         $namespace = $input->getArgument('namespace');
         $rootDirectory = $input->getArgument('directory');
         $route = $input->getOption('route');
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . self::WEBINF;
+        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . self::WEBINF;
 
+        //Replace slashes in namespace with backslashes
+        //in case the user enters a slash
         if (preg_match('/\//', $namespace)) {
             $namespace = str_replace('/', '\\', $namespace);
         }
@@ -68,20 +75,6 @@ class ApplicationConfig extends Command
         if (!is_dir($rootDirectory)) {
             mkdir($rootDirectory, 0777, true);
         }
-
-        $staticFilesDirectory = __DIR__ . '/../../../../templates/static';
-        if ($handle = opendir($staticFilesDirectory)) {
-            while (false !== ($file = readdir($handle))) {
-                if ($file == '.' || $file == '..' || $file == 'META-INF'|| $file == 'WEB-INF') {
-                    continue;
-                }
-                $templatefile = realpath($staticFilesDirectory) . DIRECTORY_SEPARATOR . $file;
-                Util::putFile($file, $templatefile, realpath($rootDirectory), $route, $applicationName, $namespace);
-            }
-        }
-
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF';
-        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . 'META-INF';
 
         if (!is_dir($webInf)) {
             mkdir($webInf, 0777, true);
@@ -91,9 +84,8 @@ class ApplicationConfig extends Command
             mkdir($metaInf, 0777, true);
         }
 
-        $this->addWebXml($webInf, $route, $applicationName, $namespace);
-        $this->addContextXml($metaInf, $route, $applicationName, $namespace);
-        $this->addPointcutsXml($webInf, $route, $applicationName, $namespace);
+        $staticFilesDirectory = __DIR__ . '/../../../../templates/static';
+        Util::findFiles($staticFilesDirectory, $rootDirectory, $route, $applicationName, $namespace);
     }
 
     protected function addWebXml($directory, $route, $applicationName, $namespace)

@@ -30,4 +30,30 @@ class Util
         $file = $directory . DIRECTORY_SEPARATOR . $fileName;
         file_put_contents($file, $templateString);
     }
+
+    public static function findFiles($dir, $rootDirectory, $route, $applicationName, $namespace)
+    {
+        if ($handle = opendir($dir)) {
+            while (false !== ($file = readdir($handle))) {
+                if ($file == '.' || $file == '..') {
+                    continue;
+                }
+                echo "$file\n";
+
+                if (is_link($file)) {
+                    continue;
+                }
+                //WEB-INF and META-INF are not found as directories, weird
+                if (is_dir($file)) {
+                    echo $file;
+                    Util::findFiles(realpath($file), $rootDirectory, $route, $applicationName, $namespace);
+                }
+
+                if (is_file($file)) {
+                    $templatefile = realpath($dir) . DIRECTORY_SEPARATOR . $file;
+                    Util::putFile($file, $templatefile, realpath($rootDirectory), $route, $applicationName, $namespace);
+                }
+            }
+        }
+    }
 }
