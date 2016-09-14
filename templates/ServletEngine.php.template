@@ -9,8 +9,8 @@ use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
 /**
  * This is the '{#servlet#}' servlet implementation.
  *
- * @Route(name="{#route#}",
- *        urlPattern={"/{#route#}.do", "/{#route#}.do*"})
+ * @Route(name="{#path#}",
+ *        urlPattern={"/{#path#}.do", "/{#path#}.do*"})
  */
 class {#servlet#} extends HttpServlet
 {

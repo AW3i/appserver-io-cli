@@ -11,21 +11,23 @@ namespace AppserverIo\Cli\Commands\Utils;
 class Util
 {
 
-    public static function putFile($fileName, $template, $directory, $route, $applicationName, $namespace)
+    public static function putFile($fileName, $template, $directory, $applicationName, $namespace, $path = null, $class = null)
     {
         chdir($directory);
         $search = [
             '{#application-name#}',
             '{#namespace#}',
-            '{#route#}',
-            '{#directory#}'
+            '{#path#}',
+            '{#directory#}',
+            '{#action-name#}',
         ];
 
         $replace = [
             $applicationName,
             $namespace,
-            $route,
-            $directory
+            $path,
+            $directory,
+            $fileName
         ];
 
         $templateString = str_replace($search, $replace, file_get_contents($template));
@@ -33,7 +35,7 @@ class Util
         file_put_contents($file, $templateString);
     }
 
-    public static function findFiles($dir, $rootDirectory, $route, $applicationName, $namespace)
+    public static function findFiles($dir, $rootDirectory, $applicationName, $namespace, $path = null)
     {
         if ($handle = opendir($dir)) {
             while (false !== ($file = readdir($handle))) {
@@ -44,12 +46,12 @@ class Util
                 if (is_dir($file) && !($file == '.' || $file == '..')) {
                     $recursiveDir = $dir . DIRECTORY_SEPARATOR . $file;
                     $recursiveRoot = $rootDirectory . DIRECTORY_SEPARATOR . $file;
-                    Util::findFiles($recursiveDir, $recursiveRoot, $route, $applicationName, $namespace);
+                    Util::findFiles($recursiveDir, $recursiveRoot, $path, $applicationName, $namespace);
                 }
 
                 if (is_file($file)) {
                     $templatefile = $dir . DIRECTORY_SEPARATOR . $file;
-                    Util::putFile($file, $templatefile, $rootDirectory, $route, $applicationName, $namespace);
+                    Util::putFile($file, $templatefile, $rootDirectory, $path, $applicationName, $namespace);
                 }
             }
         }

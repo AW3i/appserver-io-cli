@@ -17,4 +17,3 @@
  */
 
 require 'vendor/autoload.php';
-require '{#directory#}/vendor/autoload.php';

@@ -5,7 +5,7 @@
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/AW3i/appserver-io-cli
+ * @link      https://github.com/mohrwurm/appserver-io-cli
  */
 
 
@@ -15,6 +15,8 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use AppserverIo\Cli\Commands\Utils\Util;
+use AppserverIo\Cli\Commands\Utils\DirKeys;
 
 class ActionCommand extends Command
 {
@@ -55,15 +57,18 @@ class ActionCommand extends Command
         $namespace = $input->getArgument('namespace');
         $path = $input->getArgument('path');
         $rootDirectory = $input->getArgument('directory');
+        $class = get_called_class();
 
-        $actionTemplate = __DIR__ . '/../../../../templates/Action.php.template';
+        $actionTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . 'Action.php.template';
+        $requestKeysTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . 'RequestKeys.php';
 
         if (preg_match('/\//', $namespace)) {
             $namespace = str_replace('/', '\\', $namespace);
         }
 
         $dirNamespace = str_replace('\\', '/', $namespace);
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR. $dirNamespace . DIRECTORY_SEPARATOR . 'Actions';
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions';
+        $utilsdir = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils';
         $indexDo = $rootDirectory . DIRECTORY_SEPARATOR . 'index.do';
 
         if (!is_dir($webInf)) {
@@ -74,18 +79,9 @@ class ActionCommand extends Command
             file_put_contents($indexDo, '');
         }
 
-        $search = [
-            '{#path#}',
-            '{#namespace#}',
-            '{#action-name#}',
-        ];
-        $replace = [
-            $path,
-            $namespace,
-            $actionName,
-        ];
-        $templateString = str_replace($search, $replace, file_get_contents($actionTemplate));
-        $servletFile = $webInf . DIRECTORY_SEPARATOR . ucfirst($actionName) . 'Action.php';
-        file_put_contents($servletFile, $templateString);
+        if (!is_file($utils)) {
+            Util::putFile($utils, $requestKeysTemplate, realpath($utilsdir), null, $namespace, $path, $class);
+        }
+        Util::putFile('RequestKeys.php', $actionTemplate, realpath($webInf), null, $namespace, $path, $class);
     }
 }

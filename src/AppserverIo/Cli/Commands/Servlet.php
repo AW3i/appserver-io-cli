@@ -31,7 +31,7 @@ class Servlet extends Command
             ->setDescription('Create appserver.io Servlet')
             ->addOption('namespace', 'c', InputOption::VALUE_REQUIRED, 'servlet namespace')
             ->addOption('servlet', 's', InputOption::VALUE_REQUIRED, 'servlet name')
-            ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'servlet route')
+            ->addOption('path', 'r', InputOption::VALUE_REQUIRED, 'servlet path')
             ->addOption('directory', 'd', InputOption::VALUE_OPTIONAL, 'webapps root directory', '/opt/appserver/webapps/example');
     }
 
@@ -56,7 +56,7 @@ class Servlet extends Command
     {
         $namespace = $input->getOption('namespace');
         $servlet = $input->getOption('servlet');
-        $route = $input->getOption('route');
+        $path = $input->getOption('path');
         $rootDirectory = $input->getOption('directory');
 
         $servletTemplate = __DIR__ . '/../../../../templates/ServletEngine.php.template';
@@ -75,12 +75,12 @@ class Servlet extends Command
         $search = [
             '{#namespace#}',
             '{#servlet#}',
-            '{#route#}',
+            '{#path#}',
         ];
         $replace = [
             $namespace,
             $servlet,
-            $route
+            $path
         ];
         $templateString = str_replace($search, $replace, file_get_contents($servletTemplate));
 

@@ -31,8 +31,7 @@ class ApplicationConfig extends Command
             ->setDescription('Create appserver.io Config')
             ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'namespace for the project')
-            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory')
-            ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'config route');
+            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
     }
 
     /**
@@ -57,10 +56,9 @@ class ApplicationConfig extends Command
         $applicationName = $input->getArgument('application-name');
         $namespace = $input->getArgument('namespace');
         $rootDirectory = $input->getArgument('directory');
-        $rootDirectory = realpath($rootDirectory);
-        $route = $input->getOption('route');
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBINF;
-        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METAINF;
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . DIRECTORY_SEPARATOR . $namespace;
+        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES . DIRECTORY_SEPARATOR . $namespace;
+        $dhtml = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::DHTML;
 
         //Replace slashes in namespace with backslashes
         //in case the user enters a slash
@@ -74,13 +72,24 @@ class ApplicationConfig extends Command
 
         if (!is_dir($webInf)) {
             mkdir($webInf, 0777, true);
+            mkdir($webInf . 'Actions', 0777, true);
+            mkdir($webInf . 'Utils', 0777, true);
         }
 
         if (!is_dir($metaInf)) {
             mkdir($metaInf, 0777, true);
         }
 
+        if (!is_dir($dhtml)) {
+            mkdir($dhtml, 0777, true);
+        }
+
+        if (!is_dir($dhtml)) {
+            mkdir($dhtml, 0777, true);
+        }
+
+
         $staticFilesDirectory = DirKeys::STATICTEMPLATES;
-        Util::findFiles($staticFilesDirectory, $rootDirectory, $route, $applicationName, $namespace);
+        Util::findFiles($staticFilesDirectory, realpath($rootDirectory), $applicationName, $namespace);
     }
 }
