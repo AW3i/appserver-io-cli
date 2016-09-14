@@ -10,7 +10,6 @@ namespace AppserverIo\Cli\Commands\Utils;
  */
 class Util
 {
-    const DIRECTORY_SEPARATOR = '/';
 
     public static function putFile($fileName, $template, $directory, $route, $applicationName, $namespace)
     {
@@ -49,7 +48,7 @@ class Util
                 }
 
                 if (is_file($file)) {
-                    $templatefile = realpath($dir) . DIRECTORY_SEPARATOR . $file;
+                    $templatefile = $dir . DIRECTORY_SEPARATOR . $file;
                     Util::putFile($file, $templatefile, $rootDirectory, $route, $applicationName, $namespace);
                 }
             }

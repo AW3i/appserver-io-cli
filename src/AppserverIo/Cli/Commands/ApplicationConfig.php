@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use AppserverIo\Cli\Commands\Utils\Util;
+use AppserverIo\Cli\Commands\Utils\DirKeys;
 
 /**
  *
@@ -20,12 +21,6 @@ use AppserverIo\Cli\Commands\Utils\Util;
  */
 class ApplicationConfig extends Command
 {
-
-    const WEB = 'web.xml';
-    const CONTEXT = 'context.xml';
-    const POINTCUTS = 'pointcuts.xml';
-    const WEBINF = 'WEB-INF';
-    const METAINF = 'META-INF';
 
     /**
      * Configures the current command.
@@ -62,9 +57,10 @@ class ApplicationConfig extends Command
         $applicationName = $input->getArgument('application-name');
         $namespace = $input->getArgument('namespace');
         $rootDirectory = $input->getArgument('directory');
+        $rootDirectory = realpath($rootDirectory);
         $route = $input->getOption('route');
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . self::WEBINF;
-        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . self::METAINF;
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBINF;
+        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METAINF;
 
         //Replace slashes in namespace with backslashes
         //in case the user enters a slash
@@ -84,7 +80,7 @@ class ApplicationConfig extends Command
             mkdir($metaInf, 0777, true);
         }
 
-        $staticFilesDirectory = __DIR__ . '/../../../../templates/static';
+        $staticFilesDirectory = DirKeys::STATICTEMPLATES;
         Util::findFiles($staticFilesDirectory, $rootDirectory, $route, $applicationName, $namespace);
     }
 }
