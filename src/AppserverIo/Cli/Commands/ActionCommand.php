@@ -79,6 +79,8 @@ class ActionCommand extends Command
         }
 
         Util::putFile($actionName, $actionTemplate, $rootDirectory, null, $namespace, $path, $class);
-        Util::putFile('RequestKeys.php', $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
+        if(!is_file($utilsDirectory . DIRECTORY_SEPARATOR . 'RequestKeys.php')) {
+            Util::putFile('RequestKeys.php', $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
+        }
     }
 }
