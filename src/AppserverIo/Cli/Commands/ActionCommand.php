@@ -5,10 +5,8 @@
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      https://github.com/AW3i/appserver-io-cli
  */
-
-
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
@@ -16,11 +14,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppserverIo\Cli\Commands\Utils\Util;
-use AppserverIo\Cli\Commands\Utils\DirKeys;
 
 class ActionCommand extends Command
 {
-
     /**
      * Configures the current command.
      */
@@ -33,7 +29,6 @@ class ActionCommand extends Command
             ->addArgument('path', InputOption::VALUE_REQUIRED, 'Action path')
             ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
     }
-
     /**
      * Executes the current command.
      *
@@ -57,31 +52,33 @@ class ActionCommand extends Command
         $namespace = $input->getArgument('namespace');
         $path = $input->getArgument('path');
         $rootDirectory = $input->getArgument('directory');
+        $actionTemplate = __DIR__ . '/../../../../templates/Action.php.template';
+        $requestKeysTemplate = __DIR__ .
+            '/../../../../templates/dynamic/WEB-INF/classes/Util/RequestKeys.php';
         $class = get_called_class();
-
-        $actionTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . 'Action.php.template';
-        $requestKeysTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . 'RequestKeys.php';
-
         if (preg_match('/\//', $namespace)) {
             $namespace = str_replace('/', '\\', $namespace);
         }
 
         $dirNamespace = str_replace('\\', '/', $namespace);
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions';
-        $utilsdir = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils';
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' .
+            DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR
+            . $dirNamespace . DIRECTORY_SEPARATOR .  'Actions';
+        $utilsDirectory = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' .
+            DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR
+            . $dirNamespace . DIRECTORY_SEPARATOR .  'Utils';
         $indexDo = $rootDirectory . DIRECTORY_SEPARATOR . 'index.do';
-
         if (!is_dir($webInf)) {
             mkdir($webInf, 0777, true);
         }
-
+        if (!is_dir($utilsDirectory)) {
+            mkdir($utilsDirectory, 0777, true);
+        }
         if (!is_file($indexDo)) {
             file_put_contents($indexDo, '');
         }
 
-        if (!is_file($utils)) {
-            Util::putFile($utils, $requestKeysTemplate, realpath($utilsdir), null, $namespace, $path, $class);
-        }
-        Util::putFile('RequestKeys.php', $actionTemplate, realpath($webInf), null, $namespace, $path, $class);
+        Util::putFile($actionName, $actionTemplate, $rootDirectory, null, $namespace, $path, $class);
+        Util::putFile('RequestKeys.php', $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
     }
 }

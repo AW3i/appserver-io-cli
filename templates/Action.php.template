@@ -33,7 +33,6 @@ class IndexAction extends DispatchAction
      */
     public function indexAction(HttpServletRequestInterface $servletRequest, HttpServletResponseInterface $servletResponse)
     {
-        $servletResponse->appendBodyStream("hello i'am a simple servlet");
     }
 
 }

@@ -32,6 +32,14 @@ class Util
 
         $templateString = str_replace($search, $replace, file_get_contents($template));
         $file = $directory . DIRECTORY_SEPARATOR . $fileName;
+        if ($class === 'AppserverIo\Cli\Commands\ActionCommand') {
+            $dirNamespace = str_replace('\\', '/', $namespace);
+            $file = $directory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . ucfirst($fileName) . 'Action.php';
+        }
+        if ($fileName === 'RequestKeys.php') {
+            $dirNamespace = str_replace('\\', '/', $namespace);
+            $file = $directory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'RequestKeys.php';
+        }
         file_put_contents($file, $templateString);
     }
 

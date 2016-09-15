@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ${util.namespace}\IndexAction
+ * {#namespace#}\Utils\RequestKeys
  *
  * NOTICE OF LICENSE
  *
@@ -11,38 +11,62 @@
  *
  * PHP version 5
  *
- * @author  Tim Wagner <tw@appserver.io>
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://github.com/${composer.name}
+ * @author    Tim Wagner <tw@appserver.io>
+ * @copyright 2015 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/appserver-io-apps/example
+ * @link      http://www.appserver.io
  */
 
-namespace ${util.namespace};
+namespace {#namespace#}\Utils;
 
 /**
- * Utility class containing the request keys.
+ * Request keys that are used to store data in a request context.
  *
- * @author  Tim Wagner <tw@appserver.io>
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link    https://github.com/${composer.name}
+ * @author    Tim Wagner <tw@appserver.io>
+ * @copyright 2015 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/appserver-io-apps/example
+ * @link      http://www.appserver.io
  */
 class RequestKeys
 {
 
     /**
-     * Make constructor private to avoid direct initialization.
+     * Private to constructor to avoid instancing this class.
      */
     private function __construct()
     {
     }
 
     /**
-     * Make clone method private to avoid initialization by cloning.
+     * The key for a collection with error messages.
      *
-     * @return ${util.namespace}\RequestKeys
+     * @return string
      */
-    private function __clone()
-    {
-    }
+    const ERROR_MESSAGES = 'error.messages';
+
+    /**
+     * The key for a collection with entities.
+     *
+     * @return string
+     */
+    const OVERVIEW_DATA = 'overview.data';
+
+    /**
+     * The key for an entity.
+     *
+     * @return string
+     */
+    const VIEW_DATA = 'view.data';
+
+    /**
+     * The key for a 'action'.
+     *
+     * @return string
+     */
+    const ACTION = 'action';
+
 
     /**
      * Rout.Lt version we're using.
@@ -51,3 +75,4 @@ class RequestKeys
      */
     const ROUTLT_VERSION = 'routlt.version';
 }
+
