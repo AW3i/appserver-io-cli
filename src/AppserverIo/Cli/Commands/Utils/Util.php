@@ -57,4 +57,19 @@ class Util
         }
         return 0;
     }
+
+    public static function deleteFiles($target) {
+        if(is_dir($target)){
+            $files = glob($target . '{,.}[!.,!..]*',GLOB_MARK|GLOB_BRACE);
+
+            foreach( $files as $file )
+            {
+                Util::deleteFiles( $file );
+            }
+
+            rmdir( $target );
+        } elseif(is_file($target)) {
+            unlink( $target );
+        }
+    }
 }

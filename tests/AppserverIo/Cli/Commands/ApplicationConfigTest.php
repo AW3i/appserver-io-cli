@@ -14,6 +14,7 @@ namespace AppserverIo\Cli\Commands;
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
+use AppserverIo\Cli\Commands\Utils\Util;
 
 class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
 {
@@ -56,17 +57,6 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     }
     public function tearDown()
     {
-        if(is_dir($this->directory)){
-            $files = glob( $this->directory . '*', GLOB_MARK );
-
-            foreach( $files as $file )
-            {
-                delete_files( $file );
-            }
-
-            rmdir( $this->directory );
-        } elseif(is_file($this->directory)) {
-            unlink( $this->directory );
-        }
+        Util::deleteFiles($this->directory . DIRECTORY_SEPARATOR);
     }
 }
