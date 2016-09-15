@@ -18,7 +18,7 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     protected $fileName;
     protected $template;
     protected $directory;
-    protected $route;
+    protected $path;
     protected $applicationName;
     protected $namespace;
 
@@ -29,7 +29,7 @@ class UtilTest extends \PHPUnit_Framework_TestCase
         echo $this->template;
         $this->template = realpath($this->template);
         $this->directory = __DIR__ . '/';
-        $this->route = 'false';
+        $this->path = 'false';
         $this->applicationName = 'testunit';
         $this->namespace = 'testing\\test';
 
@@ -37,7 +37,7 @@ class UtilTest extends \PHPUnit_Framework_TestCase
 
     public function testPutFile() {
         echo __DIR__;
-        Util::putFile($this->fileName, $this->template, $this->directory, $this->route, $this->applicationName, $this->namespace);
+        Util::putFile($this->fileName, $this->template, $this->directory, $this->path, $this->applicationName, $this->namespace);
         $this->assertTrue(file_exists($this->directory . self::WEB));
     }
 

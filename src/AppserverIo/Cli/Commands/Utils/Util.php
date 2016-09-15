@@ -46,12 +46,12 @@ class Util
                 if (is_dir($file) && !($file == '.' || $file == '..')) {
                     $recursiveDir = $dir . DIRECTORY_SEPARATOR . $file;
                     $recursiveRoot = $rootDirectory . DIRECTORY_SEPARATOR . $file;
-                    Util::findFiles($recursiveDir, $recursiveRoot, $path, $applicationName, $namespace);
+                    Util::findFiles($recursiveDir, $recursiveRoot, $applicationName, $namespace, $path);
                 }
 
                 if (is_file($file)) {
                     $templatefile = $dir . DIRECTORY_SEPARATOR . $file;
-                    Util::putFile($file, $templatefile, $rootDirectory, $path, $applicationName, $namespace);
+                    Util::putFile($file, $templatefile, $rootDirectory, $applicationName, $namespace, $path);
                 }
             }
         }

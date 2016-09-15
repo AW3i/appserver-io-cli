@@ -11,6 +11,10 @@
 
 namespace AppserverIo\Cli\Commands;
 
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
+
 class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -23,6 +27,8 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     protected $route;
     protected $applicationName;
     protected $namespace;
+    protected $argvInput;
+    protected $output;
 
     public function invokeMethod(&$object, $methodName, array $parameters = array())
     {
@@ -35,41 +41,32 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
 
     public function setUp() {
         $this->applicationConfig = new ApplicationConfig();
-        $this->directory = __DIR__ . '/';
-        $this->route = 'false';
-        $this->applicationName = 'testunit';
+        $this->directory = __DIR__ . DIRECTORY_SEPARATOR . 'test';
+        $this->path = 'false';
+        $this->applicationName = 'test-project';
         $this->namespace = 'testing\\test';
+        $this->argvInput = new ArrayInput(array('application-name' => $this->applicationName, 'namespace' => $this->namespace, 'directory' => $this->directory));
+        $this->output = new NullOutput();
     }
 
-    public function testAddWebXmlCreatesFile()
+    public function testApplicationConfig()
     {
-        $this->invokeMethod($this->applicationConfig, 'addWebXml', array($this->directory, $this->route, $this->applicationName, $this->namespace));
-        $this->assertTrue(file_exists($this->directory . self::WEB));
+        $this->applicationConfig->run($this->argvInput, $this->output);
+        $this->assertTrue(file_exists($this->directory . DIRECTORY_SEPARATOR . 'build.xml'));
     }
-
-    public function testAddContextXmlCreatesFile()
+    public function tearDown()
     {
-        $this->invokeMethod($this->applicationConfig, 'addContextXml', array($this->directory, $this->route, $this->applicationName, $this->namespace));
-        $this->assertTrue(file_exists($this->directory . self::CONTEXT));
-    }
+        if(is_dir($this->directory)){
+            $files = glob( $this->directory . '*', GLOB_MARK );
 
-    public function testAddPointcutsXmlCreatesFile()
-    {
-        $this->invokeMethod($this->applicationConfig, 'addPointcutsXml', array($this->directory, $this->route, $this->applicationName, $this->namespace));
-        $this->assertTrue(file_exists($this->directory . self::POINTCUTS));
-    }
+            foreach( $files as $file )
+            {
+                delete_files( $file );
+            }
 
-    public function tearDown() {
-        if(file_exists($this->directory . self::WEB)) {
-            unlink($this->directory . self::WEB);
-        }
-
-        if(file_exists($this->directory . self::CONTEXT)) {
-            unlink($this->directory . self::CONTEXT);
-        }
-
-        if(file_exists($this->directory . self::POINTCUTS)) {
-            unlink($this->directory . self::POINTCUTS);
+            rmdir( $this->directory );
+        } elseif(is_file($this->directory)) {
+            unlink( $this->directory );
         }
     }
 }

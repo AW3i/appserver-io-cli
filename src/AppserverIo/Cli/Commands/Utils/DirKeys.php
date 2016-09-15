@@ -25,5 +25,5 @@ class DirKeys
     const METAINF = 'META-INF';
     const DHTML = 'dhtml';
     const WEBCLASSES = 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
-    const METACLASSES = 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
+    const METACLASSES = 'META-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
 }

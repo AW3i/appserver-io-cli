@@ -56,8 +56,9 @@ class ApplicationConfig extends Command
         $applicationName = $input->getArgument('application-name');
         $namespace = $input->getArgument('namespace');
         $rootDirectory = $input->getArgument('directory');
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . DIRECTORY_SEPARATOR . $namespace;
-        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES . DIRECTORY_SEPARATOR . $namespace;
+        $dirNamespace = str_replace('\\', '/', $namespace);
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR;
+        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR;
         $dhtml = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::DHTML;
 
         //Replace slashes in namespace with backslashes
