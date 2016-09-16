@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<project name="appserver-io-apps/videoclub" default="composer-init" basedir=".">
+<project name="appserver-io-apps/appserver-io-cli" default="composer-init" basedir=".">
 
     <!-- initialize ENV variable -->
     <property environment="env" />
@@ -20,10 +20,15 @@
     <property name="codepool" value="vendor"/>
 
     <!-- initialize the directory where we can find the real build files -->
-    <property name="vendor.dir" value ="${basedir}/src/${codepool}" />
+    <property name="vendor.dir" value ="${basedir}/${codepool}" />
     <property name="build.dir" value="${vendor.dir}/appserver-io/build" />
     <property name="php-target.dir" value="${basedir}/target"/>
     <property name="appserver.webapps.dir" value="/opt/appserver/webapps"/>
+
+    <!-- ==================================================================== -->
+    <!-- Import the common build configuration file                           -->
+    <!-- ==================================================================== -->
+    <import file="${build.dir}/common.xml" optional="true"/>
 
 
     <!-- ==================================================================== -->
