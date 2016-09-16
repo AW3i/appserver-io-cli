@@ -10,12 +10,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Servlet
  *
- * @author Martin Mohr <mohrwurm@gmail.com>
+ * @author    Martin Mohr <mohrwurm@gmail.com>
  * @copyright 2015 TechDivision GmbH <info@appserver.io>
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link https://github.com/mohrwurm/appserver-io-cli
- * @link http://www.appserver.io
- * @since 30.04.16
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      http://www.appserver.io
+ * @since     30.04.16
  *
  * TODO rewrite
  */
@@ -24,6 +24,7 @@ class Servlet extends Command
 
     /**
      * Configures the current command.
+     * @return null
      */
     protected function configure()
     {
@@ -43,7 +44,7 @@ class Servlet extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code

@@ -19,11 +19,13 @@ use AppserverIo\Cli\Commands\Utils\DirKeys;
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ApplicationConfig extends Command
+class ApplicationConfigCommand extends Command
 {
 
     /**
      * Configures the current command.
+     *
+     * @return null
      */
     protected function configure()
     {
@@ -42,7 +44,7 @@ class ApplicationConfig extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code

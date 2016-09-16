@@ -41,7 +41,7 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     }
 
     public function setUp() {
-        $this->applicationConfig = new ApplicationConfig();
+        $this->applicationConfig = new ApplicationConfigCommand();
         $this->directory = __DIR__ . DIRECTORY_SEPARATOR . 'test';
         $this->path = 'false';
         $this->applicationName = 'test-project';
@@ -50,7 +50,7 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
         $this->output = new NullOutput();
     }
 
-    public function testApplicationConfig()
+    public function testExecute()
     {
         $this->applicationConfig->run($this->argvInput, $this->output);
         $this->assertTrue(file_exists($this->directory . DIRECTORY_SEPARATOR . 'build.xml'));

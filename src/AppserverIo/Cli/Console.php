@@ -7,12 +7,12 @@ use Symfony\Component\Console\Application;
 /**
  * Console
  *
- * @author Martin Mohr <mohrwurm@gmail.com>
+ * @author    Martin Mohr <mohrwurm@gmail.com>
  * @copyright 2015 TechDivision GmbH <info@appserver.io>
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link https://github.com/mohrwurm/appserver-io-cli
- * @link http://www.appserver.io
- * @since 27.04.16
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      http://www.appserver.io
+ * @since     27.04.16
  */
 class Console extends Application
 {
@@ -57,8 +57,8 @@ class Console extends Application
     /**
      * build block
      *
-     * @param $title
-     * @param $informations
+     * @param string $title        the title
+     * @param string $informations the information
      *
      * @return string
      */

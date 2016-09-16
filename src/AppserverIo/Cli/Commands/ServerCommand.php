@@ -11,12 +11,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * ServerCommand
  *
- * @author Martin Mohr <mohrwurm@gmail.com>
+ * @author    Martin Mohr <mohrwurm@gmail.com>
  * @copyright 2015 TechDivision GmbH <info@appserver.io>
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link https://github.com/mohrwurm/appserver-io-cli
- * @link http://www.appserver.io
- * @since 30.04.16
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      http://www.appserver.io
+ * @since     30.04.16
  *
  * TODO rewrite
  */
@@ -28,6 +28,8 @@ class ServerCommand extends Command
 
     /**
      * Configures the current command.
+     *
+     * @return null
      */
     protected function configure()
     {
@@ -50,7 +52,7 @@ class ServerCommand extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code
@@ -70,7 +72,6 @@ class ServerCommand extends Command
         $template = $input->getOption('template');
 
         if (file_exists($configFile)) {
-
             $dom = new \DOMDocument();
             $dom->load($configFile);
             $dom->formatOutput = true;
@@ -86,14 +87,19 @@ class ServerCommand extends Command
             }
 
             $containerNodes = $dom->getElementsByTagName('container');
-            /** @var $containerNodes \DOMNodeList */
+            /**
+ * @var $containerNodes \DOMNodeList
+*/
             foreach ($containerNodes as $item) {
-                /** @var $item \DOMElement */
+                /**
+ * @var $item \DOMElement
+*/
                 if ($container == $item->getAttribute('name')) {
-
                     $serverExists = false;
                     foreach ($item->getElementsByTagName('server') as $server) {
-                        /** @var $server \DOMElement */
+                        /**
+ * @var $server \DOMElement
+*/
                         if ($section == $server->getAttribute('name')) {
                             $serverExists = true;
                             if (true === $remove) {
@@ -103,7 +109,6 @@ class ServerCommand extends Command
                         }
                     }
                     if (true === $add) {
-
                         if (true === $serverExists) {
                             throw new \Exception('server "' . $section . '" aready exists');
                         }
@@ -113,7 +118,6 @@ class ServerCommand extends Command
                         } else {
                             //default template file
                             $templateFile = $servletTemplate = __DIR__ . '/../../../../templates/server.xml';
-
                         }
                         if (file_exists($templateFile)) {
                             $search = ['{#name#}'];
@@ -135,5 +139,4 @@ class ServerCommand extends Command
             $dom->save($configFile);
         }
     }
-
 }

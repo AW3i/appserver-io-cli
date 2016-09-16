@@ -13,12 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Config
  *
- * @author Martin Mohr <mohrwurm@gmail.com>
+ * @author    Martin Mohr <mohrwurm@gmail.com>
  * @copyright 2015 TechDivision GmbH <info@appserver.io>
- * @license http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link https://github.com/mohrwurm/appserver-io-cli
- * @link http://www.appserver.io
- * @since 30.04.16
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      http://www.appserver.io
+ * @since     30.04.16
  */
 class Config extends Command
 {
@@ -64,6 +64,7 @@ class Config extends Command
 
     /**
      * Configures the current command.
+     * @return null
      */
     protected function configure()
     {
@@ -87,7 +88,7 @@ class Config extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code
@@ -108,7 +109,6 @@ class Config extends Command
         $backup = $input->getOption('backup');
 
         if (file_exists($configFile)) {
-
             $dom = new \DOMDocument();
             $dom->load($configFile);
             $dom->formatOutput = true;
@@ -124,9 +124,13 @@ class Config extends Command
             }
 
             $serverNodes = $dom->getElementsByTagName('server');
-            /** @var $serverNode \DOMNodeList */
+            /**
+ * @var $serverNode \DOMNodeList
+*/
             foreach ($serverNodes as $item) {
-                /** @var $item \DOMElement */
+                /**
+ * @var $item \DOMElement
+*/
                 if ($server == $item->getAttribute('name')) {
                     if (self::ARG_ACTION_ADD == $action) {
                         $params = $item->getElementsByTagName('params')->item(0);
@@ -138,9 +142,13 @@ class Config extends Command
                         $params->appendChild($element);
                     } elseif (self::ARG_ACTION_REMOVE == $action) {
                         $params = $item->getElementsByTagName('params')->item(0);
-                        /** @var $params \DOMElement */
+                        /**
+ * @var $params \DOMElement
+*/
                         foreach ($params->getElementsByTagName('param') as $param) {
-                            /** @var $param \DOMElement */
+                            /**
+ * @var $param \DOMElement
+*/
                             if ($parameter == $param->getAttribute('name')) {
                                 $params->removeChild($param);
                             }
@@ -157,14 +165,18 @@ class Config extends Command
     /**
      * modify parameter
      *
-     * @param \DOMElement $serverElement
-     * @param $parameter
-     * @param $value
+     * @param \DOMElement $serverElement the serverElement
+     * @param string      $parameter     the parameter
+     * @param string      $value         the value
+     *
+     * @return null
      */
     protected function modifyParameter(\DOMElement $serverElement, $parameter, $value)
     {
         foreach ($serverElement->getElementsByTagName('param') as $param) {
-            /** @var $param \DOMElement */
+            /**
+ * @var $param \DOMElement
+*/
             if ($parameter == $param->getAttribute('name')) {
                 $type = $param->getAttribute('type');
                 if (self::TYPE_INTEGER == $type && false === filter_var($value, FILTER_VALIDATE_INT)) {

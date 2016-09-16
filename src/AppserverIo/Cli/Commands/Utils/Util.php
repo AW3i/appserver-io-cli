@@ -11,6 +11,19 @@ namespace AppserverIo\Cli\Commands\Utils;
 class Util
 {
 
+    /**
+     * Create a file in the speicified directory from a given template
+     *
+     * @param string $fileName        the filename
+     * @param string $template        the template
+     * @param string $directory       the directory
+     * @param string $applicationName the applicatin name
+     * @param string $namespace       the namespace
+     * @param string $path            the path
+     * @param string $class           the class
+     *
+     * @return void
+     */
     public static function putFile($fileName, $template, $directory, $applicationName, $namespace, $path = null, $class = null)
     {
         chdir($directory);
@@ -43,6 +56,17 @@ class Util
         file_put_contents($file, $templateString);
     }
 
+    /**
+     * Recursively scan a directory, when a file is found call putFile()
+     *
+     * @param string $dir             The directory to be scanned
+     * @param string $rootDirectory   the root directory of the webapplication
+     * @param string $applicationName the name of the application
+     * @param string $namespace       the namespace of the application
+     * @param string $path            the path for an action
+     *
+     * @return void
+     */
     public static function findFiles($dir, $rootDirectory, $applicationName, $namespace, $path = null)
     {
         if ($handle = opendir($dir)) {
@@ -63,21 +87,36 @@ class Util
                 }
             }
         }
-        return 0;
     }
 
-    public static function deleteFiles($target) {
-        if(is_dir($target)){
-            $files = glob($target . '{,.}[!.,!..]*',GLOB_MARK|GLOB_BRACE);
+    /**
+     * Recursively delete the given directory with all underlying content
+     *
+     * @param string $directory the directory to be deleted
+     *
+     * @return void
+     */
+    public static function deleteFiles($directory)
+    {
+        if (is_dir($directory)) {
+            $files = glob($directory . '{,.}[!.,!..]*', GLOB_MARK|GLOB_BRACE);
 
-            foreach( $files as $file )
-            {
-                Util::deleteFiles( $file );
+            foreach ($files as $file) {
+                Util::deleteFiles($file);
             }
 
-            rmdir( $target );
-        } elseif(is_file($target)) {
-            unlink( $target );
+            rmdir($directory);
+        } elseif (is_file($directory)) {
+            unlink($directory);
         }
+    }
+
+    /**
+     * @param string $template the name of the template to find
+     *
+     * @return string
+     */
+    public static function getTemplate($template)
+    {
     }
 }

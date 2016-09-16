@@ -40,6 +40,7 @@ class Server extends Command
 
     /**
      * Configures the current command.
+     * @return null
      */
     protected function configure()
     {
@@ -58,7 +59,7 @@ class Server extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code
@@ -95,7 +96,7 @@ class Server extends Command
     /**
      * validate action
      *
-     * @param $action
+     * @param string $action the action
      *
      * @return bool
      */
@@ -117,7 +118,7 @@ class Server extends Command
     /**
      * get appserver root directory
      *
-     * @param InputInterface $input
+     * @param InputInterface $input the input
      *
      * @return mixed
      * @throws \Exception

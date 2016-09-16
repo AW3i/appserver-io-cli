@@ -19,6 +19,8 @@ class ActionCommand extends Command
 {
     /**
      * Configures the current command.
+     *
+     * @return null
      */
     protected function configure()
     {
@@ -37,7 +39,7 @@ class ActionCommand extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code
@@ -54,7 +56,7 @@ class ActionCommand extends Command
         $rootDirectory = $input->getArgument('directory');
         $actionTemplate = __DIR__ . '/../../../../templates/Action.php.template';
         $requestKeysTemplate = __DIR__ .
-            '/../../../../templates/dynamic/WEB-INF/classes/Util/RequestKeys.php';
+            '/../../../../templates/dynamic/WEB-INF/classes/Util/RequestKeys.php.template';
         $class = get_called_class();
         if (preg_match('/\//', $namespace)) {
             $namespace = str_replace('/', '\\', $namespace);
@@ -79,7 +81,7 @@ class ActionCommand extends Command
         }
 
         Util::putFile($actionName, $actionTemplate, $rootDirectory, null, $namespace, $path, $class);
-        if(!is_file($utilsDirectory . DIRECTORY_SEPARATOR . 'RequestKeys.php')) {
+        if (!is_file($utilsDirectory . DIRECTORY_SEPARATOR . 'RequestKeys.php')) {
             Util::putFile('RequestKeys.php', $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
         }
     }
