@@ -26,7 +26,6 @@ class Util
      */
     public static function putFile($fileName, $template, $directory, $applicationName, $namespace, $path = null, $class = null)
     {
-        chdir($directory);
         $search = [
             '{#application-name#}',
             '{#namespace#}',
@@ -49,7 +48,7 @@ class Util
             $dirNamespace = str_replace('\\', '/', $namespace);
             $file = $directory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . ucfirst($fileName) . 'Action.php';
         }
-        if ($fileName === 'RequestKeys.php') {
+        if ($fileName === DirKeys::REQUESTKEYS) {
             $dirNamespace = str_replace('\\', '/', $namespace);
             $file = $directory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'RequestKeys.php';
         }
@@ -118,5 +117,68 @@ class Util
      */
     public static function getTemplate($template)
     {
+    }
+
+    /**
+     * Creates the basic structure of an appserver.io webapp
+     *
+     * @param string $rootDirectory the root directory of the webapp
+     * @param string $namespace     the namespace of the webapp
+     * @return null
+     */
+    public static function createDirectories($rootDirectory, $namespace)
+    {
+
+        $dirNamespace = str_replace('\\', '/', $namespace);
+        $dhtml = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::DHTML;
+        $webInf = $rootDirectory . DIRECTORY_SEPARATOR .DirKeys::WEBCLASSES . $dirNamespace ;
+        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES . $dirNamespace;
+        $commonDir = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::COMMONCLASSES . $dirNamespace;
+        $indexDo = $rootDirectory . DIRECTORY_SEPARATOR . 'index.do';
+
+        if (!is_dir($rootDirectory)) {
+            mkdir($rootDirectory, 0777, true);
+        }
+
+        if (!is_dir($webInf)) {
+            mkdir($webInf, 0777, true);
+            mkdir($webInf . DirKeys::ACTIONDIR, 0777, true);
+            mkdir($webInf . DirKeys::UTILSDIR, 0777, true);
+        }
+
+        if (!is_dir($metaInf)) {
+            mkdir($metaInf, 0777, true);
+            mkdir($metaInf . DirKeys::REPOSDIR, 0777, true);
+            mkdir($metaInf . DirKeys::SERVICESDIR, 0777, true);
+        }
+
+        if (!is_dir($commonDir)) {
+            mkdir($commonDir, 0777, true);
+            mkdir($commonDir. DirKeys::ENTITIESDIR, 0777, true);
+        }
+
+        if (!is_dir($dhtml)) {
+            mkdir($dhtml, 0777, true);
+        }
+
+        if (!is_file($indexDo)) {
+            file_put_contents($indexDo, '');
+        }
+    }
+
+    /**
+     * Replaces a slash with a backslash
+     *
+     * @param string $var the variable to be replaced
+     * @return string
+     */
+    public static function slashToBackSlash($var)
+    {
+        //Replace slashes in namespace with backslashes
+        //in case the user enters a slash
+        if (preg_match('/\//', $var)) {
+            return str_replace('/', '\\', $var);
+        }
+        return $var;
     }
 }

@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppserverIo\Cli\Commands\Utils\Util;
+use AppserverIo\Cli\Commands\Utils\DirKeys;
 
 class ActionCommand extends Command
 {
@@ -52,37 +53,18 @@ class ActionCommand extends Command
     {
         $actionName = $input->getArgument('action-name');
         $namespace = $input->getArgument('namespace');
+        $namespace = Util::slashToBackSlash($namespace);
         $path = $input->getArgument('path');
         $rootDirectory = $input->getArgument('directory');
-        $actionTemplate = __DIR__ . '/../../../../templates/Action.php.template';
-        $requestKeysTemplate = __DIR__ .
-            '/../../../../templates/dynamic/WEB-INF/classes/Util/RequestKeys.php.template';
+        $actionTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . DirKeys::ACTION;
+        $requestKeysTemplate = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYS;
         $class = get_called_class();
-        if (preg_match('/\//', $namespace)) {
-            $namespace = str_replace('/', '\\', $namespace);
-        }
 
-        $dirNamespace = str_replace('\\', '/', $namespace);
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' .
-            DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR
-            . $dirNamespace . DIRECTORY_SEPARATOR .  'Actions';
-        $utilsDirectory = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' .
-            DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR
-            . $dirNamespace . DIRECTORY_SEPARATOR .  'Utils';
-        $indexDo = $rootDirectory . DIRECTORY_SEPARATOR . 'index.do';
-        if (!is_dir($webInf)) {
-            mkdir($webInf, 0777, true);
-        }
-        if (!is_dir($utilsDirectory)) {
-            mkdir($utilsDirectory, 0777, true);
-        }
-        if (!is_file($indexDo)) {
-            file_put_contents($indexDo, '');
-        }
+        Util::createDirectories($rootDirectory, $namespace);
 
         Util::putFile($actionName, $actionTemplate, $rootDirectory, null, $namespace, $path, $class);
-        if (!is_file($utilsDirectory . DIRECTORY_SEPARATOR . 'RequestKeys.php')) {
-            Util::putFile('RequestKeys.php', $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
+        if (!is_file($rootDirectory. DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES. DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . Util::slashToBackSlash($namespace) . DIRECTORY_SEPARATOR .  'RequestKeys.php')) {
+            Util::putFile(DirKeys::REQUESTKEYS, $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
         }
     }
 }

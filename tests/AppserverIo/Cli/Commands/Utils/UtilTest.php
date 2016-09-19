@@ -11,6 +11,8 @@
 
 namespace AppserverIo\Cli\Commands\Utils;
 
+use AppserverIo\Cli\Commands\Utils\DirKeys;
+
 
 class UtilTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +27,7 @@ class UtilTest extends \PHPUnit_Framework_TestCase
 
     public function setUp() {
         $this->fileName = self::WEB;
-        $this->template = __DIR__ . '/../../../../../templates/static/WEB-INF/web.xml';
+        $this->template = DirKeys::STATICTEMPLATES . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
         echo $this->template;
         $this->template = realpath($this->template);
         $this->directory = __DIR__ . '/';

@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * TODO rewrite
  */
-class Servlet extends Command
+class ServletCommand extends Command
 {
 
     /**

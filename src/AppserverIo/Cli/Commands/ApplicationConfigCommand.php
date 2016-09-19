@@ -58,39 +58,8 @@ class ApplicationConfigCommand extends Command
         $applicationName = $input->getArgument('application-name');
         $namespace = $input->getArgument('namespace');
         $rootDirectory = $input->getArgument('directory');
-        $dirNamespace = str_replace('\\', '/', $namespace);
-        $webInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR;
-        $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR;
-        $dhtml = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::DHTML;
 
-        //Replace slashes in namespace with backslashes
-        //in case the user enters a slash
-        if (preg_match('/\//', $namespace)) {
-            $namespace = str_replace('/', '\\', $namespace);
-        }
-
-        if (!is_dir($rootDirectory)) {
-            mkdir($rootDirectory, 0777, true);
-        }
-
-        if (!is_dir($webInf)) {
-            mkdir($webInf, 0777, true);
-            mkdir($webInf . 'Actions', 0777, true);
-            mkdir($webInf . 'Utils', 0777, true);
-        }
-
-        if (!is_dir($metaInf)) {
-            mkdir($metaInf, 0777, true);
-        }
-
-        if (!is_dir($dhtml)) {
-            mkdir($dhtml, 0777, true);
-        }
-
-        if (!is_dir($dhtml)) {
-            mkdir($dhtml, 0777, true);
-        }
-
+        Util::createDirectories($rootDirectory, $namespace);
 
         $staticFilesDirectory = DirKeys::STATICTEMPLATES;
         Util::findFiles($staticFilesDirectory, realpath($rootDirectory), $applicationName, $namespace);

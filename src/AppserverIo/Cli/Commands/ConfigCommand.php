@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @link      http://www.appserver.io
  * @since     30.04.16
  */
-class Config extends Command
+class ConfigCommand extends Command
 {
     use BackupTrait;
 
