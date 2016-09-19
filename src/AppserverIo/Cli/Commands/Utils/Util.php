@@ -16,13 +16,9 @@ class Util
     /**
      * Create a file in the speicified directory from a given template
      *
-     * @param string $fileName        the filename
-     * @param string $template        the template
-     * @param string $directory       the directory
-     * @param string $applicationName the applicatin name
-     * @param string $namespace       the namespace
-     * @param string $path            the path
-     * @param string $class           the class
+     * @param string              $fileName   The filename
+     * @param string              $template   The template
+     * @param PropertiesInterface $properties The properties to write into the templates
      *
      * @return void
      */
@@ -53,15 +49,11 @@ class Util
     /**
      * Recursively scan a directory, when a file is found call putFile()
      *
-     * @param string $templateDirectory             The template directory to be scanned
-     * @param string $rootDirectory                 The root directory of the web application
-     * @param string $applicationName               The name of the application
-     * @param string $namespace                     The namespace of the application
-     * @param string $path                          The path for an action
+     * @param string              $templateDirectory The template directory to be scanned
+     * @param PropertiesInterface $properties        The properties to write into the templates
      *
      * @return void
      */
-    //public static function findFiles($templateDirectory, $rootDirectory, $applicationName, $namespace, $path = null)
     public static function findFiles($templateDirectory, $properties)
     {
         if ($handle = opendir($templateDirectory)) {
