@@ -1,6 +1,6 @@
 <phpunit>
     <testsuites>
-	    <testsuite name="{#application-name#} PHPUnit testsuite">
+	    <testsuite name="${application-name} PHPUnit testsuite">
 	        <directory suffix="Test.php">WEB-INF/tests</directory>
             <directory suffix="Test.php">META-INF/tests</directory>
             <directory suffix="Test.php">common-INF/tests</directory>

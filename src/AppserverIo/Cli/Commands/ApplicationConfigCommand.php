@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Finder\Finder;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
+use AppserverIo\Properties\Properties;
 
 /**
  *
@@ -55,13 +56,15 @@ class ApplicationConfigCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $applicationName = $input->getArgument('application-name');
-        $namespace = $input->getArgument('namespace');
-        $rootDirectory = $input->getArgument('directory');
+        $arguments = new Properties();
+        $arguments->add('application-name', $input->getArgument('application-name'));
+        $arguments->add('namespace', $input->getArgument('namespace'));
+        $arguments->add('directory', $input->getArgument('directory'));
 
-        Util::createDirectories($rootDirectory, $namespace);
+        Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+        $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
 
         $staticFilesDirectory = DirKeys::STATICTEMPLATES;
-        Util::findFiles($staticFilesDirectory, realpath($rootDirectory), $applicationName, $namespace);
+        Util::findFiles($staticFilesDirectory, $arguments);
     }
 }

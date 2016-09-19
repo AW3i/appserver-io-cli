@@ -11,10 +11,10 @@
 
 namespace AppserverIo\Cli\Commands;
 
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use AppserverIo\Cli\Commands\Utils\Util;
+use AppserverIo\Cli\Commands\Utils\DirKeys;
 
 class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,32 +28,27 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     protected $route;
     protected $applicationName;
     protected $namespace;
-    protected $argvInput;
+    protected $arrayInput;
+    protected $file;
     protected $output;
-
-    public function invokeMethod(&$object, $methodName, array $parameters = array())
-    {
-        $reflection = new \ReflectionClass(get_class($object));
-        $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
-
-        return $method->invokeArgs($object, $parameters);
-    }
 
     public function setUp() {
         $this->applicationConfig = new ApplicationConfigCommand();
-        $this->directory = __DIR__ . DIRECTORY_SEPARATOR . 'test';
+        $this->directory = __DIR__ . DIRECTORY_SEPARATOR . 'web';
         $this->path = 'false';
         $this->applicationName = 'test-project';
         $this->namespace = 'testing\\test';
-        $this->argvInput = new ArrayInput(array('application-name' => $this->applicationName, 'namespace' => $this->namespace, 'directory' => $this->directory));
+        $this->arrayInput = new ArrayInput(array('application-name' => $this->applicationName, 'namespace' => $this->namespace, 'directory' => $this->directory));
         $this->output = new NullOutput();
+        $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
     }
 
-    public function testExecute()
+    public function testExecuteCreatesNonEmptyFile()
     {
-        $this->applicationConfig->run($this->argvInput, $this->output);
-        $this->assertTrue(file_exists($this->directory . DIRECTORY_SEPARATOR . 'build.xml'));
+        var_dump($this->directory);
+        $this->applicationConfig->run($this->arrayInput, $this->output);
+        $this->assertTrue(file_exists($this->file));
+        $this->assertFalse(0 == filesize($this->file));
     }
     public function tearDown()
     {

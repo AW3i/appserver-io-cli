@@ -1,6 +1,6 @@
 <?php
 
-namespace {#namespace#}\Actions;
+namespace ${namespace}\Actions;
 
 use AppserverIo\Routlt\DispatchAction;
 use AppserverIo\Routlt\ActionInterface;
@@ -8,11 +8,11 @@ use AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface;
 use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
 
 /**
- * @Path(name="{#path#}")
+ * @Path(name="${path}")
  *
  * @Results({
- *     @Result(name="input", result="/dhtml/{#action-name#}.dhtml", type="AppserverIo\Routlt\Results\ServletDispatcherResult"),
- *     @Result(name="failure", result="/dhtml/{#action-name#}.dhtml", type="AppserverIo\Routlt\Results\ServletDispatcherResult")
+ *     @Result(name="input", result="/dhtml/${action-name}.dhtml", type="AppserverIo\Routlt\Results\ServletDispatcherResult"),
+ *     @Result(name="failure", result="/dhtml/${action-name}.dhtml", type="AppserverIo\Routlt\Results\ServletDispatcherResult")
  * })
  *
  */

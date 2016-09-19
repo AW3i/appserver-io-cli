@@ -2,6 +2,8 @@
 
 namespace AppserverIo\Cli\Commands\Utils;
 
+use AppserverIo\Properties\PropertiesUtil;
+
 /**
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
@@ -24,65 +26,62 @@ class Util
      *
      * @return void
      */
-    public static function putFile($fileName, $template, $directory, $applicationName, $namespace, $path = null, $class = null)
+    public static function putFile($fileName, $template, $properties)
     {
-        $search = [
-            '{#application-name#}',
-            '{#namespace#}',
-            '{#path#}',
-            '{#directory#}',
-            '{#action-name#}',
-        ];
 
-        $replace = [
-            $applicationName,
-            $namespace,
-            $path,
-            $directory,
-            $fileName
-        ];
+        //Create a resource by opening the template file
+        $resource = fopen($template, 'r');
 
-        $templateString = str_replace($search, $replace, file_get_contents($template));
-        $file = $directory . DIRECTORY_SEPARATOR . $fileName;
-        if ($class === 'AppserverIo\Cli\Commands\ActionCommand') {
-            $dirNamespace = str_replace('\\', '/', $namespace);
-            $file = $directory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . ucfirst($fileName) . 'Action.php';
+        //Get the class singleton
+        $propertiesUtil = PropertiesUtil::singleton();
+        //Replace the placeholders with the actual data
+        $templateString = $propertiesUtil->replacePropertiesInStream($properties, $resource);
+        fclose($resource);
+
+        $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . $fileName;
+        if ($properties->getProperty('class') === 'AppserverIo\Cli\Commands\ActionCommand') {
+            $dirNamespace = str_replace('\\', '/', $properties->getProperty('namespace'));
+            $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . ucfirst($fileName) . 'Action.php';
         }
+
         if ($fileName === DirKeys::REQUESTKEYS) {
             $dirNamespace = str_replace('\\', '/', $namespace);
-            $file = $directory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'RequestKeys.php';
+            $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'RequestKeys.php';
         }
         file_put_contents($file, $templateString);
     }
-
     /**
      * Recursively scan a directory, when a file is found call putFile()
      *
-     * @param string $dir             The directory to be scanned
-     * @param string $rootDirectory   the root directory of the webapplication
-     * @param string $applicationName the name of the application
-     * @param string $namespace       the namespace of the application
-     * @param string $path            the path for an action
+     * @param string $templateDirectory             The template directory to be scanned
+     * @param string $rootDirectory                 The root directory of the web application
+     * @param string $applicationName               The name of the application
+     * @param string $namespace                     The namespace of the application
+     * @param string $path                          The path for an action
      *
      * @return void
      */
-    public static function findFiles($dir, $rootDirectory, $applicationName, $namespace, $path = null)
+    //public static function findFiles($templateDirectory, $rootDirectory, $applicationName, $namespace, $path = null)
+    public static function findFiles($templateDirectory, $properties)
     {
-        if ($handle = opendir($dir)) {
+        if ($handle = opendir($templateDirectory)) {
             while (false !== ($file = readdir($handle))) {
-                chdir($dir);
+                chdir($templateDirectory);
                 if (is_link($file)) {
                     continue;
                 }
                 if (is_dir($file) && !($file == '.' || $file == '..')) {
-                    $recursiveDir = $dir . DIRECTORY_SEPARATOR . $file;
-                    $recursiveRoot = $rootDirectory . DIRECTORY_SEPARATOR . $file;
-                    Util::findFiles($recursiveDir, $recursiveRoot, $applicationName, $namespace, $path);
+                    $recursiveDir = $templateDirectory . DIRECTORY_SEPARATOR . $file;
+                    //clone the property and set the directory in which the new found files shall be written
+                    $recursiveProperties = clone $properties;
+                    $recursiveProperties->setProperty('directory', $properties->getProperty('directory') . DIRECTORY_SEPARATOR . $file);
+
+                    Util::findFiles($recursiveDir, $recursiveProperties);
                 }
 
                 if (is_file($file)) {
-                    $templatefile = $dir . DIRECTORY_SEPARATOR . $file;
-                    Util::putFile($file, $templatefile, $rootDirectory, $applicationName, $namespace, $path);
+                    $templatefile = $templateDirectory . DIRECTORY_SEPARATOR . $file;
+                    Util::putFile($file, $templatefile, $properties);
                 }
             }
         }
@@ -154,7 +153,7 @@ class Util
 
         if (!is_dir($commonDir)) {
             mkdir($commonDir, 0777, true);
-            mkdir($commonDir. DirKeys::ENTITIESDIR, 0777, true);
+            mkdir($commonDir . DirKeys::ENTITIESDIR, 0777, true);
         }
 
         if (!is_dir($dhtml)) {

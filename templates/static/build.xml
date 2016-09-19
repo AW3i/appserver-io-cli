@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE project>
-<project name="{#application-name#}" default="composer-update">
+<project name="${application-name}" default="composer-update">
 
     <!-- initialize ENV variable -->
     <property environment="env" />
@@ -13,15 +13,15 @@
     </tstamp>
 
     <!-- initialize file based properties -->
-    <property file="{#directory#}/build.properties"/>
-    <property file="{#directory#}/build.default.properties"/>
-    <property file="{#directory#}/build.${os.family}.properties"/>
+    <property file="${directory}/build.properties"/>
+    <property file="${directory}/build.default.properties"/>
+    <property file="${directory}/build.${os.family}.properties"/>
 
     <!-- initialize the library specific properties -->
     <property name="codepool" value="vendor"/>
 
     <!-- initialize the directory where we can find the real build files -->
-    <property name="vendor.dir" value ="{#directory#}/${codepool}" />
+    <property name="vendor.dir" value ="${directory}/${codepool}" />
     <property name="build.dir" value="${vendor.dir}/appserver-io/build" />
 
     <!-- ==================================================================== -->
@@ -42,8 +42,8 @@
     <!-- Installs all dependencies defined in composer.json                   -->
     <!-- ==================================================================== -->
     <target name="composer-install" depends="is-composer-installed" unless="composer.present" description="Installs all dependencies defined in composer.json">
-        <echo message="Now execute Composer in {#directory#}"/>
-        <exec dir="{#directory#}" executable="composer">
+        <echo message="Now execute Composer in ${directory}"/>
+        <exec dir="${directory}" executable="composer">
             <arg line="--no-interaction --prefer-dist --optimize-autoloader install"/>
         </exec>
     </target>
@@ -52,7 +52,7 @@
     <!-- Updates composer dependencies defined in composer.json               -->
     <!-- ==================================================================== -->
     <target name="composer-update" depends="is-composer-installed" if="composer.present" description="Updates composer dependencies defined in composer.json">
-        <exec dir="{#directory#}" executable="composer">
+        <exec dir="${directory}" executable="composer">
             <arg line="--no-interaction --prefer-dist --optimize-autoloader update"/>
         </exec>
     </target>

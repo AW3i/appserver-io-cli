@@ -1,1 +1,1 @@
-# README for project {#application-name#}
+# README for project ${application-name}

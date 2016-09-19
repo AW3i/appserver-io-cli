@@ -15,6 +15,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
+use AppserverIo\Properties\Properties;
 
 class ActionCommand extends Command
 {
@@ -51,20 +52,20 @@ class ActionCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $actionName = $input->getArgument('action-name');
-        $namespace = $input->getArgument('namespace');
-        $namespace = Util::slashToBackSlash($namespace);
-        $path = $input->getArgument('path');
-        $rootDirectory = $input->getArgument('directory');
+        $arguments = new Properties();
+        $arguments->add('action-name', $input->getArgument('action-name'));
+        $arguments->add('namespace', Util::slashToBackSlash($input->getArgument('namespace')));
+        $arguments->add('path', $input->getArgument('path'));
+        $arguments->add('directory', $input->getArgument('directory'));
+        $arguments->add('class', get_called_class());
         $actionTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . DirKeys::ACTION;
         $requestKeysTemplate = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYS;
-        $class = get_called_class();
 
-        Util::createDirectories($rootDirectory, $namespace);
+        Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 
-        Util::putFile($actionName, $actionTemplate, $rootDirectory, null, $namespace, $path, $class);
-        if (!is_file($rootDirectory. DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES. DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . Util::slashToBackSlash($namespace) . DIRECTORY_SEPARATOR .  'RequestKeys.php')) {
-            Util::putFile(DirKeys::REQUESTKEYS, $requestKeysTemplate, $rootDirectory, null, $namespace, $path, $class);
+        Util::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
+        if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES. DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . Util::slashToBackSlash($arguments->getProperty('namespace')) . DIRECTORY_SEPARATOR .  'RequestKeys.php')) {
+            Util::putFile(DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);
         }
     }
 }

@@ -1,4 +1,4 @@
-<server name="{#name#}"
+<server name="${name}"
         type="\AppserverIo\Server\Servers\MultiThreadedServer"
         worker="\AppserverIo\Server\Workers\ThreadWorker"
         socket="\AppserverIo\Server\Sockets\StreamSocket"

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="http://www.appserver.io/appserver">
 
-    <display-name>{#application-name#}</display-name>
+    <display-name>${application-name}</display-name>
     <description></description>
 
     <session-config>
-        <session-name>{#application-name#}_login</session-name>
-        <session-file-prefix>{#application-name#}_session_</session-file-prefix>
+        <session-name>${application-name}_login</session-name>
+        <session-file-prefix>${application-name}_session_</session-file-prefix>
     </session-config>
 
     <servlet>
@@ -27,7 +27,7 @@
          |-->
         <init-param>
             <param-name>action.namespace</param-name>
-            <param-value>{#namespace#}/Actions</param-value>
+            <param-value>${namespace}/Actions</param-value>
         </init-param>
         <!--
          | this is optional and can be used to store credentials
