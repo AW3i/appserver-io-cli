@@ -1,5 +1,6 @@
 # appserver.io cli
 [![Build Status](https://travis-ci.org/AW3i/appserver-io-cli.svg?branch=aw%2Farguments)](https://travis-ci.org/AW3i/appserver-io-cli)
+[![Coverage Status](https://coveralls.io/repos/github/AW3i/appserver-io-cli/badge.svg?branch=master)](https://coveralls.io/github/AW3i/appserver-io-cli?branch=master)
 
 ## appserver:server
 > action: start | stop | restart | status
