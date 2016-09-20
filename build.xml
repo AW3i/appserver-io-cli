@@ -135,14 +135,33 @@
     <!-- ==================================================================== -->
     <!-- Copies the sources to the deploy directory                           -->
     <!-- ==================================================================== -->
-    <target name="docker-deploy" depends="copy" description="Copies the sources to the deploy directory.">
+    <target name="docker-deploy"  description="Copies the sources to the deploy directory.">
         <!-- copy the sources to the deploy directory -->
-        <echo message="Copy sources to ${deploy.dir} ..."/>
-        <copy todir="${appserver.webapps.dir}" preservelastmodified="true" overwrite="true">
-            <fileset dir="${php-target.dir}">
-                <include name="**/*"/>
-            </fileset>
-        </copy>
+        <exec dir="${basedir}" executable="docker-compose">
+            <arg line="up -d"/>
+        </exec>
+        <exec dir="${basedir}" executable="docker">
+            <arg line="exec appserveriocli_appserver_1 mkdir -p /opt/appserver/webapps/${appName}" />
+        </exec>
+        <exec dir="${basedir}" executable="docker">
+            <arg line="cp target/${appName} appserveriocli_appserver_1:/opt/appserver/webapps/" />
+        </exec>
+        <exec dir="${basedir}" executable="docker">
+            <arg line="restart appserveriocli_appserver_1" />
+        </exec>
+    </target>
+
+    <!-- ==================================================================== -->
+    <!-- Copies the sources to the deploy directory                           -->
+    <!-- ==================================================================== -->
+    <target name="docker-delete-container" description="Copies the sources to the deploy directory.">
+        <!-- copy the sources to the deploy directory -->
+        <exec dir="${basedir}" executable="docker">
+            <arg line="stop appserveriocli_appserver_1"/>
+        </exec>
+        <exec dir="${basedir}" executable="docker">
+            <arg line="rm appserveriocli_appserver_1"/>
+        </exec>
     </target>
 
 
