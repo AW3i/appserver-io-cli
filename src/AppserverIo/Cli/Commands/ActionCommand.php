@@ -58,14 +58,17 @@ class ActionCommand extends Command
         $arguments->add('path', $input->getArgument('path'));
         $arguments->add('directory', $input->getArgument('directory'));
         $arguments->add('class', get_called_class());
-        $actionTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . DirKeys::ACTION;
-        $requestKeysTemplate = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYS;
 
-        Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+        if (Util::validateArguments($arguments)) {
+            $actionTemplate = DirKeys::TEMPLATESDIR . DIRECTORY_SEPARATOR . DirKeys::ACTION;
+            $requestKeysTemplate = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYS;
 
-        Util::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
-        if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES. DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . Util::slashToBackSlash($arguments->getProperty('namespace')) . DIRECTORY_SEPARATOR .  'RequestKeys.php')) {
-            Util::putFile(DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);
+            Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+
+            Util::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
+            if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES. DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . Util::slashToBackSlash($arguments->getProperty('namespace')) . DIRECTORY_SEPARATOR .  'RequestKeys.php')) {
+                Util::putFile(DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);
+            }
         }
     }
 }

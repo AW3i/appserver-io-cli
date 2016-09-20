@@ -32,7 +32,8 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     protected $file;
     protected $output;
 
-    public function setUp() {
+    public function setUp()
+    {
         $this->applicationConfig = new ApplicationConfigCommand();
         $this->directory = __DIR__ . DIRECTORY_SEPARATOR . 'web';
         $this->path = 'false';
@@ -45,7 +46,6 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
 
     public function testExecuteCreatesNonEmptyFile()
     {
-        var_dump($this->directory);
         $this->applicationConfig->run($this->arrayInput, $this->output);
         $this->assertTrue(file_exists($this->file));
         $this->assertFalse(0 == filesize($this->file));

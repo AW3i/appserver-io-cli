@@ -61,10 +61,11 @@ class ApplicationConfigCommand extends Command
         $arguments->add('namespace', $input->getArgument('namespace'));
         $arguments->add('directory', $input->getArgument('directory'));
 
-        Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
-        $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
-
-        $staticFilesDirectory = DirKeys::STATICTEMPLATES;
-        Util::findFiles($staticFilesDirectory, $arguments);
+        if (Util::validateArguments($arguments)) {
+            Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+            $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
+            $staticFilesDirectory = DirKeys::STATICTEMPLATES;
+            Util::findFiles($staticFilesDirectory, $arguments);
+        }
     }
 }

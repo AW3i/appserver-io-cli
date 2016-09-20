@@ -3,6 +3,7 @@
 namespace AppserverIo\Cli\Commands\Utils;
 
 use AppserverIo\Properties\PropertiesUtil;
+use AppserverIo\Properties\PropertiesInterface;
 
 /**
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
@@ -35,13 +36,12 @@ class Util
         fclose($resource);
 
         $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . $fileName;
+        $dirNamespace = str_replace('\\', '/', $properties->getProperty('namespace'));
         if ($properties->getProperty('class') === 'AppserverIo\Cli\Commands\ActionCommand') {
-            $dirNamespace = str_replace('\\', '/', $properties->getProperty('namespace'));
             $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . ucfirst($fileName) . 'Action.php';
         }
 
         if ($fileName === DirKeys::REQUESTKEYS) {
-            $dirNamespace = str_replace('\\', '/', $namespace);
             $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'RequestKeys.php';
         }
         file_put_contents($file, $templateString);
@@ -77,6 +77,7 @@ class Util
                 }
             }
         }
+        closedir($handle);
     }
 
     /**
@@ -171,5 +172,24 @@ class Util
             return str_replace('/', '\\', $var);
         }
         return $var;
+    }
+
+    /**
+     * Validates the given arguments from a Properties object
+     *
+     * @param PropertiesInterface $args The Properties arguments to handle
+     * @throws InvalidArgumentException
+     * @return bool
+     */
+    public static function validateArguments(PropertiesInterface $args)
+    {
+        $argsArray = $args->getKeys();
+        foreach ($argsArray as $arg) {
+            if (null !== $args->getProperty($arg)) {
+                continue;
+            }
+                throw new \InvalidArgumentException("$arg not found");
+        }
+        return true;
     }
 }
