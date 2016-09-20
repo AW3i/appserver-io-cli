@@ -1,0 +1,38 @@
+<?php
+
+namespace ${namespace}\Actions;
+
+use AppserverIo\Routlt\DispatchAction;
+use AppserverIo\Routlt\ActionInterface;
+use AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface;
+use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
+
+/**
+ * @Path(name="${path}")
+ *
+ * @Results({
+ *     @Result(name="input", result="/dhtml/${action-name}.dhtml", type="AppserverIo\Routlt\Results\ServletDispatcherResult"),
+ *     @Result(name="failure", result="/dhtml/${action-name}.dhtml", type="AppserverIo\Routlt\Results\ServletDispatcherResult")
+ * })
+ *
+ */
+class IndexAction extends DispatchAction
+{
+    /**
+     * Default action to invoke if no action parameter has been found in the request.
+     *
+     * Loads all sample data and attaches it to the servlet context ready to be rendered
+     * by the template.
+     *
+     * @param \AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface  $servletRequest  The request instance
+     * @param \AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface $servletResponse The response instance
+     *
+     * @return string|null The action result
+     *
+     * @Action(name="/index")
+     */
+    public function indexAction(HttpServletRequestInterface $servletRequest, HttpServletResponseInterface $servletResponse)
+    {
+    }
+
+}

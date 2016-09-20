@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://www.appserver.io/appserver">
+
+    <display-name>${application-name}</display-name>
+    <description></description>
+
+    <session-config>
+        <session-name>${application-name}_login</session-name>
+        <session-file-prefix>${application-name}_session_</session-file-prefix>
+    </session-config>
+
+    <servlet>
+        <description>A servlet that handles DHTML files.</description>
+        <display-name>The DHTML servlet</display-name>
+        <servlet-name>dhtml</servlet-name>
+        <servlet-class>\AppserverIo\Appserver\ServletEngine\Servlets\DhtmlServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <description>The Rout.Lt 2 controller servlet implementation.</description>
+        <display-name>The Rout.Lt 2 controller servlet</display-name>
+        <servlet-name>routlt</servlet-name>
+        <servlet-class>\AppserverIo\Routlt\ControllerServlet</servlet-class>
+        <!--
+         | this is mandatory and specifies the path where Rout.Lt
+         | is looking for your action class implementations
+         |-->
+        <init-param>
+            <param-name>action.namespace</param-name>
+            <param-value>${namespace}/Actions</param-value>
+        </init-param>
+        <!--
+         | this is optional and can be used to store credentials
+         | you don't want to add to version control, for example
+         |-->
+        <init-param>
+            <param-name>routlt.configuration.file</param-name>
+            <param-value>WEB-INF/routlt.properties</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dhtml</servlet-name>
+        <url-pattern>*.dhtml</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>routlt</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>routlt</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <!-- define an optional error page -->
+    <error-page>
+        <error-code-pattern>404</error-code-pattern>
+        <error-location>/dhtml/error.dhtml</error-location>
+    </error-page>
+</web-app>

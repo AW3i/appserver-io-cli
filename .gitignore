@@ -2,3 +2,6 @@
 /vendor/
 composer.lock
 /.idea
+tags
+target
+.padawan/

@@ -1,0 +1,4 @@
+appserver:
+    image: appserver/dist
+    ports:
+        - "8080:80"

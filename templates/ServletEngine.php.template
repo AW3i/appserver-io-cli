@@ -1,18 +1,18 @@
 <?php
 
-namespace {#namespace#};
+namespace ${namespace};
 
 use AppserverIo\Psr\Servlet\Http\HttpServlet;
 use AppserverIo\Psr\Servlet\Http\HttpServletRequestInterface;
 use AppserverIo\Psr\Servlet\Http\HttpServletResponseInterface;
 
 /**
- * This is the '{#servlet#}' servlet implementation.
+ * This is the '${servlet}' servlet implementation.
  *
- * @Route(name="{#route#}",
- *        urlPattern={"/{#route#}.do", "/{#route#}.do*"})
+ * @Route(name="${path}",
+ *        urlPattern=${"/{path}.do", "/{path}.do*"})
  */
-class {#servlet#} extends HttpServlet
+class ${servlet} extends HttpServlet
 {
 
     /**
@@ -30,6 +30,6 @@ class {#servlet#} extends HttpServlet
         HttpServletRequestInterface $servletRequest,
         HttpServletResponseInterface $servletResponse
     ) {
-        $servletResponse->appendBodyStream('{#servlet#}');
+        $servletResponse->appendBodyStream('${servlet}');
     }
 }

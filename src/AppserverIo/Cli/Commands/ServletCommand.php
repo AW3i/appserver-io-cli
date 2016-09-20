@@ -3,22 +3,28 @@
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ServletCommand
+ * Servlet
  *
- * @author Martin Mohr <mohrwurm@gmail.com>
- * @since 23.04.16
+ * @author    Martin Mohr <mohrwurm@gmail.com>
+ * @copyright 2015 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      http://www.appserver.io
+ * @since     30.04.16
+ *
+ * TODO rewrite
  */
 class ServletCommand extends Command
 {
 
     /**
      * Configures the current command.
+     * @return null
      */
     protected function configure()
     {
@@ -26,7 +32,7 @@ class ServletCommand extends Command
             ->setDescription('Create appserver.io Servlet')
             ->addOption('namespace', 'c', InputOption::VALUE_REQUIRED, 'servlet namespace')
             ->addOption('servlet', 's', InputOption::VALUE_REQUIRED, 'servlet name')
-            ->addOption('route', 'r', InputOption::VALUE_REQUIRED, 'servlet route')
+            ->addOption('path', 'r', InputOption::VALUE_REQUIRED, 'servlet path')
             ->addOption('directory', 'd', InputOption::VALUE_OPTIONAL, 'webapps root directory', '/opt/appserver/webapps/example');
     }
 
@@ -38,7 +44,7 @@ class ServletCommand extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code
@@ -51,10 +57,10 @@ class ServletCommand extends Command
     {
         $namespace = $input->getOption('namespace');
         $servlet = $input->getOption('servlet');
-        $route = $input->getOption('route');
+        $path = $input->getOption('path');
         $rootDirectory = $input->getOption('directory');
 
-        $servletTemplate = __DIR__ . '/../../../../tpl/ServletEngine.php.template';
+        $servletTemplate = __DIR__ . '/../../../../templates/ServletEngine.php.template';
 
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes';
 
@@ -70,12 +76,12 @@ class ServletCommand extends Command
         $search = [
             '{#namespace#}',
             '{#servlet#}',
-            '{#route#}',
+            '{#path#}',
         ];
         $replace = [
             $namespace,
             $servlet,
-            $route
+            $path
         ];
         $templateString = str_replace($search, $replace, file_get_contents($servletTemplate));
 

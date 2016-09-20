@@ -4,44 +4,80 @@ namespace AppserverIo\Cli\Commands;
 
 use AppserverIo\Cli\BackupTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * ServerParameterCommand
+ * Config
  *
- * @author Martin Mohr <mohrwurm@gmail.com>
- * @since 23.04.16
+ * @author    Martin Mohr <mohrwurm@gmail.com>
+ * @copyright 2015 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ * @link      http://www.appserver.io
+ * @since     30.04.16
  */
-class ServerParameterCommand extends Command
+class ConfigCommand extends Command
 {
-
     use BackupTrait;
 
-    const DEFAULT_CONFIG = '/opt/appserver/etc/appserver/appserver.xml';
+    const ARG_ACTION_CHANGE = 'change';
+    const ARG_ACTION_ADD = 'add';
+    const ARG_ACTION_REMOVE = 'remove';
+
+    const ARG_TYPE_PARAM = 'parameter';
 
     const TYPE_INTEGER = 'integer';
     const TYPE_STRING = 'string';
     const TYPE_BOOLEAN = 'boolean';
 
+    const DEFAULT_CONFIG = '/opt/appserver/etc/appserver/appserver.xml';
+
+    /**
+     * get available action arguments
+     *
+     * @return array
+     */
+    protected function getAvailableActionArguments()
+    {
+        return [
+            self::ARG_ACTION_CHANGE,
+            self::ARG_ACTION_ADD,
+            self::ARG_ACTION_REMOVE
+        ];
+    }
+
+    /**
+     * get available type arguments
+     *
+     * @return array
+     */
+    protected function getAvailableTypeArguments()
+    {
+        return [
+            self::ARG_TYPE_PARAM
+        ];
+    }
+
     /**
      * Configures the current command.
+     * @return null
      */
     protected function configure()
     {
-        $this->setName('appserver:server:parameter')
-            ->setDescription('Change appserver.io server parameter')
-            ->addOption('section', 's', InputOption::VALUE_REQUIRED, 'name of server section [http|https|message-queue]')
-            ->addOption('container', 'c', InputOption::VALUE_OPTIONAL, 'server container name', 'combined-appserver')
-            ->addOption('param', 'p', InputOption::VALUE_REQUIRED, 'parameter name')
-            ->addOption('value', 'w', InputOption::VALUE_REQUIRED, 'parameter value')
-            ->addOption('type', 't', InputOption::VALUE_REQUIRED, 'parameter type [string|integer|boolean]', 'string')
-            ->addOption('file', 'f', InputOption::VALUE_OPTIONAL, 'configuration file', self::DEFAULT_CONFIG)
-            ->addOption('backup', 'b', InputOption::VALUE_OPTIONAL, 'do a backup of xml', false)
-            ->addOption('add', 'a', InputOption::VALUE_NONE, 'add parameter')
-            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'remove parameter');
+        $this->setName('appserver:config')
+            ->setDescription('Change appserver.io server configuration (e.g. ports,documentRoot..)')
+            ->addArgument('action', InputArgument::REQUIRED, implode('|', $this->getAvailableActionArguments()))
+            ->addArgument('type', InputArgument::OPTIONAL, implode('|', $this->getAvailableTypeArguments()))
+            ->addOption('container', null, InputOption::VALUE_OPTIONAL, 'name of server container [system-container|combined-appserver|...]')
+            ->addOption('server', null, InputOption::VALUE_OPTIONAL, 'name of server [http|https|message-queue|...]')
+            ->addOption('param', null, InputOption::VALUE_OPTIONAL, 'parameter name')
+            ->addOption('value', null, InputOption::VALUE_OPTIONAL, 'parameter value')
+            ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'path to appserver.io configuration file', self::DEFAULT_CONFIG)
+            ->addOption('backup', 'b', InputOption::VALUE_NONE, 'create backup from appserver.io configuration file');
     }
 
     /**
@@ -52,7 +88,7 @@ class ServerParameterCommand extends Command
      * execute() method, you set the code to execute by passing
      * a Closure to the setCode() method.
      *
-     * @param InputInterface $input An InputInterface instance
+     * @param InputInterface  $input  An InputInterface instance
      * @param OutputInterface $output An OutputInterface instance
      *
      * @return null|int null or 0 if everything went fine, or an error code
@@ -63,18 +99,16 @@ class ServerParameterCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configFile = $input->getOption('file');
-        $section = $input->getOption('section');
+        $action = $input->getArgument('action');
+        $type = $input->getArgument('type');
         $container = $input->getOption('container');
+        $server = $input->getOption('server');
         $parameter = $input->getOption('param');
         $value = $input->getOption('value');
-        $type = $input->getOption('type');
+        $configFile = $input->getOption('config');
         $backup = $input->getOption('backup');
-        $add = $input->getOption('add');
-        $remove = $input->getOption('remove');
 
         if (file_exists($configFile)) {
-
             $dom = new \DOMDocument();
             $dom->load($configFile);
             $dom->formatOutput = true;
@@ -90,11 +124,15 @@ class ServerParameterCommand extends Command
             }
 
             $serverNodes = $dom->getElementsByTagName('server');
-            /** @var $serverNode \DOMNodeList */
+            /**
+ * @var $serverNode \DOMNodeList
+*/
             foreach ($serverNodes as $item) {
-                /** @var $item \DOMElement */
-                if ($section == $item->getAttribute('name')) {
-                    if (true == $add) {
+                /**
+ * @var $item \DOMElement
+*/
+                if ($server == $item->getAttribute('name')) {
+                    if (self::ARG_ACTION_ADD == $action) {
                         $params = $item->getElementsByTagName('params')->item(0);
                         $element = $dom->createElement('param', $value);
                         $element->setAttribute('name', $parameter);
@@ -102,11 +140,15 @@ class ServerParameterCommand extends Command
                             $element->setAttribute('type', $type);
                         }
                         $params->appendChild($element);
-                    } elseif (true == $remove) {
+                    } elseif (self::ARG_ACTION_REMOVE == $action) {
                         $params = $item->getElementsByTagName('params')->item(0);
-                        /** @var $params \DOMElement */
+                        /**
+ * @var $params \DOMElement
+*/
                         foreach ($params->getElementsByTagName('param') as $param) {
-                            /** @var $param \DOMElement */
+                            /**
+ * @var $param \DOMElement
+*/
                             if ($parameter == $param->getAttribute('name')) {
                                 $params->removeChild($param);
                             }
@@ -121,16 +163,20 @@ class ServerParameterCommand extends Command
     }
 
     /**
-     * modify port
+     * modify parameter
      *
-     * @param \DOMElement $serverElement
-     * @param $parameter
-     * @param $value
+     * @param \DOMElement $serverElement the serverElement
+     * @param string      $parameter     the parameter
+     * @param string      $value         the value
+     *
+     * @return null
      */
     protected function modifyParameter(\DOMElement $serverElement, $parameter, $value)
     {
         foreach ($serverElement->getElementsByTagName('param') as $param) {
-            /** @var $param \DOMElement */
+            /**
+ * @var $param \DOMElement
+*/
             if ($parameter == $param->getAttribute('name')) {
                 $type = $param->getAttribute('type');
                 if (self::TYPE_INTEGER == $type && false === filter_var($value, FILTER_VALIDATE_INT)) {
@@ -143,7 +189,7 @@ class ServerParameterCommand extends Command
                     }
                     $value = (boolean)$value ? 'true' : 'false';
                 } elseif (self::TYPE_STRING == $type) {
-                    //check string
+                    //check string -> always true
                 }
                 $param->nodeValue = $value;
             }
