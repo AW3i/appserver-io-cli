@@ -23,10 +23,9 @@ trait BackupTrait
      */
     public function doBackup($fileName)
     {
-        if (copy($fileName, $fileName . '.' . time() . '.bak')) {
-            return true;
+        if (is_file($fileName)) {
+            return copy($fileName, $fileName . '.' . time() . '.bak');
         }
-
         return false;
     }
 }
