@@ -201,7 +201,7 @@ class Util
      *
      * @return string
      */
-    public function buildDynamicDirectory($template, $namespace)
+    public static function buildDynamicDirectory($template, $namespace)
     {
         $dirArray = explode('/', $template);
         $dynamicArray = array();
