@@ -35,5 +35,7 @@ class DirKeys
     const UTILSDIR = DIRECTORY_SEPARATOR . 'Utils';
     const ENTITIESDIR = DIRECTORY_SEPARATOR .'Entities';
     const REPOSDIR = DIRECTORY_SEPARATOR .'Repositories';
-    const SERVICESDIR = DIRECTORY_SEPARATOR .'Services';
+    const SERVICESDIR = 'Services';
+    const ABSTRACTPROCESSOR = 'AbstractProcessor.php';
+    const ABSTRACTPROCESSORTMEPLATE = 'AbstractProcessor.php.template';
 }

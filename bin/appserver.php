@@ -26,6 +26,7 @@ use AppserverIo\Cli\Commands\Server;
 use AppserverIo\Cli\Commands\ServletCommand;
 use AppserverIo\Cli\Commands\ApplicationConfigCommand;
 use AppserverIo\Cli\Commands\ActionCommand;
+use AppserverIo\Cli\Commands\ProcessorCommand;
 
 $application = new \AppserverIo\Cli\Console();
 $application->add(new ConfigCommand());
@@ -33,4 +34,5 @@ $application->add(new Server());
 $application->add(new ServletCommand());
 $application->add(new ApplicationConfigCommand());
 $application->add(new ActionCommand());
+$application->add(new Processorcommand());
 $application->run();
