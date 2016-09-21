@@ -111,6 +111,22 @@ class UtilTest extends \PHPUnit_Framework_TestCase
         Util::validateArguments($this->properties);
     }
 
+    public function testBuildDynamicDirectoryReturnsValidPathOnCorrectInput()
+    {
+        $this->template = DirKeys::DYNAMICTEMPLATES . 'WEB-INF/classes/Utils/RequestKeys.php.template';
+        $path = Util::buildDynamicDirectory($this->template, $this->properties->getProperty('namespace'));
+        $expectedPath = DirKeys::WEBCLASSES . $this->dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR;
+        $this->assertEquals($expectedPath, $path);
+    }
+
+    public function testBuildDynamicDirectoryThrowsInvalidArgumentExceptionOnWrongPath()
+    {
+        $this->template = 'WEB-INF/classes/Utils/RequestKeys.php.template';
+
+        $this->expectException(\InvalidArgumentException::class);
+        $path = Util::buildDynamicDirectory($this->template, $this->properties->getProperty('namespace'));
+    }
+
     public function tearDown()
     {
     }

@@ -209,9 +209,13 @@ class Util
         $dirNamespace = str_replace('\\', '/', $namespace);
         for ($i = 0; $i < count($dirArray)-1; $i++) {
             if ($dirArray[$i] == 'dynamic') {
-                //Skip the dynamic folder
+                //Skip the dynamic/static folder
                 $index = $i + 1;
             }
+        }
+
+        if (!isset($index)) {
+            throw new \InvalidArgumentException('Template directory not supported');
         }
 
         for ($i = $index; $i < count($dirArray)-1; $i++) {
