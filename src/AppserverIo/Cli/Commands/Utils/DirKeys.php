@@ -12,6 +12,7 @@ class DirKeys
 {
     /**
      * Private to constructor to avoid instancing this class.
+     * @codeCoverageIgnoreEnd
      */
     private function __construct()
     {
