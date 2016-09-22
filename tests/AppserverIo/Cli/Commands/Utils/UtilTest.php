@@ -129,6 +129,13 @@ class UtilTest extends \PHPUnit_Framework_TestCase
         $path = Util::buildDynamicDirectory($this->template, $this->properties->getProperty('namespace'));
     }
 
+    public function testGetTemplateThrowsInvalidArgumentException()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $path = Util::getTemplate($this->template);
+
+    }
+
     public function tearDown()
     {
     }
