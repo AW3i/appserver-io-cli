@@ -68,6 +68,7 @@ class UtilTest extends \PHPUnit_Framework_TestCase
 
     public function testPutFilePutsAction()
     {
+        $this->template = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::ACTIONDIR. DIRECTORY_SEPARATOR . DirKeys::ACTIONTEMPLATE;
         $this->properties->add('class', 'AppserverIo\Cli\Commands\ActionCommand');
         $file = $this->webInf . DIRECTORY_SEPARATOR .'Actions' . DIRECTORY_SEPARATOR . ucfirst($this->properties->getProperty('application-name')) . 'Action.php';
         Util::putFile($this->properties->getProperty('application-name'), $this->template, $this->properties);
@@ -77,8 +78,9 @@ class UtilTest extends \PHPUnit_Framework_TestCase
     public function testPutFilePutsRequestKeys()
     {
         $this->properties->setProperty('class', get_called_class());
-        $this->template = DirKeys::DYNAMICTEMPLATES . 'WEB-INF/classes/Utils/RequestKeys.php.template';
-        Util::putFile(DirKeys::REQUESTKEYS, $this->template, $this->properties);
+        $this->template = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYSTEMPLATE;
+        $path = Util::buildDynamicDirectory($this->template, $this->properties->getProperty('namespace'));
+        Util::putFile($path . DirKeys::REQUESTKEYS, $this->template, $this->properties);
         $this->assertTrue(file_exists($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $this->dirNamespace . DIRECTORY_SEPARATOR . 'Utils/RequestKeys.php'));
     }
 

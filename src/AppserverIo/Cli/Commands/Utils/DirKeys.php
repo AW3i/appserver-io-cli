@@ -18,11 +18,18 @@ class DirKeys
     {
     }
 
-    const REQUESTKEYS = 'RequestKeys.php.template';
-    const ACTION = 'Action.php.template';
+    const REQUESTKEYSTEMPLATE = 'RequestKeys.php.template';
+    const ACTIONTEMPLATE = 'Action.php.template';
+    const REQUESTKEYS = 'RequestKeys.php';
+    const ABSTRACTPROCESSOR = 'AbstractProcessor.php';
+    const ABSTRACTPROCESSORTMEPLATE = 'AbstractProcessor.php.template';
+
     const WEBINF = 'WEB-INF';
     const METAINF = 'META-INF';
     const DHTML = 'dhtml';
+    const SERVICESDIR = 'Services';
+    const ACTIONDIR = 'Actions';
+    const UTILSDIR = 'Utils';
 
     const BASEDIR = __DIR__ . DIRECTORY_SEPARATOR . '../../../../../';
     const TEMPLATESDIR = self::BASEDIR . 'templates';
@@ -31,11 +38,6 @@ class DirKeys
     const WEBCLASSES = 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
     const METACLASSES = 'META-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
     const COMMONCLASSES = 'common' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
-    const ACTIONDIR = DIRECTORY_SEPARATOR . 'Actions';
-    const UTILSDIR = DIRECTORY_SEPARATOR . 'Utils';
     const ENTITIESDIR = DIRECTORY_SEPARATOR .'Entities';
     const REPOSDIR = DIRECTORY_SEPARATOR .'Repositories';
-    const SERVICESDIR = 'Services';
-    const ABSTRACTPROCESSOR = 'AbstractProcessor.php';
-    const ABSTRACTPROCESSORTMEPLATE = 'AbstractProcessor.php.template';
 }

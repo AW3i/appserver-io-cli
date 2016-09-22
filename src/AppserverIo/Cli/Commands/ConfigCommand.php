@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @link      https://github.com/mohrwurm/appserver-io-cli
  * @link      http://www.appserver.io
  * @since     30.04.16
+ * @codeCoverageIgnoreEnd
  */
 class ConfigCommand extends Command
 {

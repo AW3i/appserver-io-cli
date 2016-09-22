@@ -36,13 +36,9 @@ class Util
         fclose($resource);
 
         $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . $fileName;
-        $dirNamespace = str_replace('\\', '/', $properties->getProperty('namespace'));
+        $dirNamespace = Util::backslashToSlash($properties->getProperty('namespace'));
         if ($properties->getProperty('class') === 'AppserverIo\Cli\Commands\ActionCommand') {
-            $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Actions' . DIRECTORY_SEPARATOR . ucfirst($fileName) . 'Action.php';
-        }
-
-        if ($fileName === DirKeys::REQUESTKEYS) {
-            $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . 'WEB-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR . $dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'RequestKeys.php';
+            $file = $properties->getProperty('directory') . DIRECTORY_SEPARATOR . Util::buildDynamicDirectory($template, $properties->getProperty('namespace')) . ucfirst($fileName) . 'Action.php';
         }
         file_put_contents($file, $templateString);
     }
@@ -109,6 +105,27 @@ class Util
      */
     public static function getTemplate($template)
     {
+        switch ($template) {
+            case DirKeys::REQUESTKEYSTEMPLATE:
+                return DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYSTEMPLATE;
+            case DirKeys::ACTIONTEMPLATE:
+                return DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::ACTIONDIR . DIRECTORY_SEPARATOR . DirKeys::ACTIONTEMPLATE;
+            case DirKeys::ABSTRACTPROCESSORTMEPLATE:
+                return DirKeys::DYNAMICTEMPLATES . DirKeys::METACLASSES . DirKeys::SERVICESDIR . DIRECTORY_SEPARATOR . DirKeys::ABSTRACTPROCESSORTMEPLATE;
+            default:
+                throw new \InvalidArgumentException("Template not found");
+        }
+    }
+
+    /**
+     * converts backslashes to slashes in a given string
+     *
+     * @param string $var the variable
+     * @return string
+     */
+    public static function backslashToSlash($var)
+    {
+        return str_replace('\\', '/', $var);
     }
 
     /**
@@ -121,7 +138,7 @@ class Util
     public static function createDirectories($rootDirectory, $namespace)
     {
 
-        $dirNamespace = str_replace('\\', '/', $namespace);
+        $dirNamespace = Util::backslashToSlash($namespace);
         $dhtml = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::DHTML;
         $webInf = $rootDirectory . DIRECTORY_SEPARATOR .DirKeys::WEBCLASSES . $dirNamespace ;
         $metaInf = $rootDirectory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES . $dirNamespace;
@@ -134,8 +151,8 @@ class Util
 
         if (!is_dir($webInf)) {
             mkdir($webInf, 0777, true);
-            mkdir($webInf . DirKeys::ACTIONDIR, 0777, true);
-            mkdir($webInf . DirKeys::UTILSDIR, 0777, true);
+            mkdir($webInf . DIRECTORY_SEPARATOR . DirKeys::ACTIONDIR, 0777, true);
+            mkdir($webInf . DIRECTORY_SEPARATOR . DirKeys::UTILSDIR, 0777, true);
         }
 
         if (!is_dir($metaInf)) {
@@ -206,7 +223,6 @@ class Util
         $dirArray = explode('/', $template);
         $dynamicArray = array();
         $counter = 0;
-        $dirNamespace = str_replace('\\', '/', $namespace);
         for ($i = 0; $i < count($dirArray)-1; $i++) {
             if ($dirArray[$i] == 'dynamic') {
                 //Skip the dynamic/static folder
@@ -221,7 +237,7 @@ class Util
         for ($i = $index; $i < count($dirArray)-1; $i++) {
             $dynamicArray[] = $dirArray[$i];
             if ($dirArray[$i] == 'classes') {
-                $dynamicArray[] = $dirNamespace;
+                $dynamicArray[] = Util::backslashToSlash($namespace);
             }
         }
 

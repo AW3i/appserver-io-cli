@@ -18,6 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @since     30.04.16
  *
  * TODO rewrite
+ * @codeCoverageIgnoreEnd
  */
 class ServletCommand extends Command
 {

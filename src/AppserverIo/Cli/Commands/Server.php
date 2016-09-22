@@ -15,6 +15,7 @@ use Symfony\Component\Process\Process;
  *
  * @author Martin Mohr <mohrwurm@gmail.com>
  * @since 23.04.16
+ * @codeCoverageIgnoreEnd
  */
 class Server extends Command
 {

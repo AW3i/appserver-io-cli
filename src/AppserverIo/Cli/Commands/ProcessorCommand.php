@@ -55,7 +55,7 @@ class ProcessorCommand extends Command
         $arguments->add('directory', $input->getArgument('directory'));
 
         if (Util::validateArguments($arguments)) {
-            $processorTemplate = DirKeys::DYNAMICTEMPLATES . DirKeys::METACLASSES. DirKeys::SERVICESDIR . DIRECTORY_SEPARATOR . DirKeys::ABSTRACTPROCESSORTMEPLATE;
+            $processorTemplate = Util::getTemplate(DirKeys::ABSTRACTPROCESSORTMEPLATE, $arguments->getProperty('namespace'));
 
             Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 
