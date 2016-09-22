@@ -1,22 +1,25 @@
 <?php
-/**
- *
- *
- * @author    Alexandros Weigl <a.weigl@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@appserver.io>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/AW3i/appserver-io-cli
- */
+
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
+use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 
+/**
+ * ActionCommand creates an Action.php file for an appserver web application based
+ * on a template
+ *
+ * @author    Alexandros Weigl <a.weigl@techdivision.com>
+ * @copyright 2016 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ */
 class ActionCommand extends Command
 {
     /**
@@ -63,14 +66,14 @@ class ActionCommand extends Command
             $actionTemplate = Util::getTemplate(DirKeys::ACTIONTEMPLATE);
             $requestKeysTemplate = Util::getTemplate(DirKeys::REQUESTKEYSTEMPLATE);
 
-            Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+            FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 
-            Util::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
+            FilesystemUtil::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
             if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace')) . DirKeys::REQUESTKEYS)) {
                 $path = Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace'));
                 //Set class to an empty string
                 $arguments->setProperty('class', '');
-                Util::putFile($path . DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);
+                FilesystemUtil::putFile($path . DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);
             }
         }
     }

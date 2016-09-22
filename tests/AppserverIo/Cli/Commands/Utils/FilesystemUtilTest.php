@@ -4,17 +4,16 @@ namespace AppserverIo\Cli\Commands\Utils;
 
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
-use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 
 /**
- * Tests Util
+ * Tests FilesystemUtil
  *
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class UtilTest extends \PHPUnit_Framework_TestCase
+class FilesystemUtilTest extends \PHPUnit_Framework_TestCase
 {
     const WEB = 'web.xml';
     protected $fileName;
@@ -59,53 +58,39 @@ class UtilTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_dir($this->common));
     }
 
-    public function testSlashToBackSlashReturnsSlash()
+    public function testPutFilePutsNormalFile()
     {
-
-        $this->assertEquals($this->properties->getProperty('namespace'), Util::slashToBackSlash($this->dirNamespace));
+        FilesystemUtil::putFile($this->fileName, $this->template, $this->properties);
+        $this->assertTrue(file_exists($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR . self::WEB));
     }
 
-    public function testSlashToBackSlashReturnsVariableIfNoMatchIsFound() {
-        $this->assertEquals($this->properties->getProperty('namespace'), Util::slashToBackSlash($this->properties->getProperty('namespace')));
+    public function testPutFilePutsAction()
+    {
+        $this->template = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::ACTIONDIR. DIRECTORY_SEPARATOR . DirKeys::ACTIONTEMPLATE;
+        $this->properties->add('class', 'AppserverIo\Cli\Commands\ActionCommand');
+        $file = $this->webInf . DIRECTORY_SEPARATOR .'Actions' . DIRECTORY_SEPARATOR . ucfirst($this->properties->getProperty('application-name')) . 'Action.php';
+        FilesystemUtil::putFile($this->properties->getProperty('application-name'), $this->template, $this->properties);
+        $this->assertTrue(file_exists($file));
     }
 
-    public function testValidateArgumentsReturnsTrue()
+    public function testPutFilePutsRequestKeys()
     {
-        $this->assertTrue(Util::validateArguments($this->properties));
-    }
-
-    public function testValidateArgumentsThrowsInvalidArgumentException()
-    {
-        $this->properties->add('empty', null);
-        $this->expectException(\InvalidArgumentException::class);
-        Util::validateArguments($this->properties);
-    }
-
-    public function testBuildDynamicDirectoryReturnsValidPathOnCorrectInput()
-    {
-        $this->template = DirKeys::DYNAMICTEMPLATES . 'WEB-INF/classes/Utils/RequestKeys.php.template';
+        $this->properties->setProperty('class', get_called_class());
+        $this->template = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYSTEMPLATE;
         $path = Util::buildDynamicDirectory($this->template, $this->properties->getProperty('namespace'));
-        $expectedPath = DirKeys::WEBCLASSES . $this->dirNamespace . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR;
-        $this->assertEquals($expectedPath, $path);
+        FilesystemUtil::putFile($path . DirKeys::REQUESTKEYS, $this->template, $this->properties);
+        $this->assertTrue(file_exists($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $this->dirNamespace . DIRECTORY_SEPARATOR . 'Utils/RequestKeys.php'));
     }
 
-    public function testBuildDynamicDirectoryThrowsInvalidArgumentExceptionOnWrongPath()
-    {
-        $this->template = 'WEB-INF/classes/Utils/RequestKeys.php.template';
-
-        $this->expectException(\InvalidArgumentException::class);
-        $path = Util::buildDynamicDirectory($this->template, $this->properties->getProperty('namespace'));
-    }
-
-    public function testGetTemplateThrowsInvalidArgumentException()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $path = Util::getTemplate($this->template);
-
-    }
-
-    public function tearDown()
+    public function testDeleteFileDeletesRecursively()
     {
         FilesystemUtil::deleteFiles($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR);
+        $this->assertFalse(file_exists($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR . self::WEB));
+        $this->assertFalse(file_exists($this->properties->getProperty('directory')));
     }
+
+    protected function tearDown()
+    {
+    }
+
 }

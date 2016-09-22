@@ -3,17 +3,17 @@
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\Console\Input\InputOption;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
+use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 
 /**
- *
+ * ApplicationConfigCommand creates the main configuration files
+ * needed for an appserver webapplication
  *
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
@@ -62,10 +62,10 @@ class ApplicationConfigCommand extends Command
         $arguments->add('directory', $input->getArgument('directory'));
 
         if (Util::validateArguments($arguments)) {
-            Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+            FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
             $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
             $staticFilesDirectory = DirKeys::STATICTEMPLATES;
-            Util::findFiles($staticFilesDirectory, $arguments);
+            FilesystemUtil::findFiles($staticFilesDirectory, $arguments);
         }
     }
 }

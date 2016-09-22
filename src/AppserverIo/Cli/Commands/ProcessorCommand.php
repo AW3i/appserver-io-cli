@@ -1,22 +1,25 @@
 <?php
-/**
- *
- *
- * @author    Alexandros Weigl <a.weigl@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@appserver.io>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/AW3i/appserver-io-cli
- */
+
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
+use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 
+/**
+ * ProcessorCommand creates a processor service for an appserver
+ * webapplication based on a template
+ *
+ * @author    Alexandros Weigl <a.weigl@techdivision.com>
+ * @copyright 2016 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ */
 class ProcessorCommand extends Command
 {
     /**
@@ -57,10 +60,10 @@ class ProcessorCommand extends Command
         if (Util::validateArguments($arguments)) {
             $processorTemplate = Util::getTemplate(DirKeys::ABSTRACTPROCESSORTMEPLATE, $arguments->getProperty('namespace'));
 
-            Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+            FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 
             $path = Util::buildDynamicDirectory($processorTemplate, $arguments->getProperty('namespace'));
-            Util::putFile($path . DirKeys::ABSTRACTPROCESSOR, $processorTemplate, $arguments);
+            FilesystemUtil::putFile($path . DirKeys::ABSTRACTPROCESSOR, $processorTemplate, $arguments);
         }
     }
 }
