@@ -10,6 +10,7 @@ use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
 use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
+use AppserverIo\Cli\Commands\AbstractCommand;
 
 /**
  * ProcessorCommand creates a processor service for an appserver
@@ -20,7 +21,7 @@ use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ProcessorCommand extends Command
+class ProcessorCommand extends AbstractCommand
 {
     /**
      * Configures the current command.
@@ -57,8 +58,8 @@ class ProcessorCommand extends Command
         $arguments->add('namespace', Util::slashToBackSlash($input->getArgument('namespace')));
         $arguments->add('directory', $input->getArgument('directory'));
 
-        if (Util::validateArguments($arguments)) {
-            $processorTemplate = Util::getTemplate(DirKeys::ABSTRACTPROCESSORTMEPLATE, $arguments->getProperty('namespace'));
+        if ($this->validateArguments($arguments)) {
+            $processorTemplate = $this->getTemplate(DirKeys::ABSTRACTPROCESSORTMEPLATE, $arguments->getProperty('namespace'));
 
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 

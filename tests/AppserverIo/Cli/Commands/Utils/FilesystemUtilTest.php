@@ -4,6 +4,7 @@ namespace AppserverIo\Cli\Commands\Utils;
 
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests FilesystemUtil
@@ -23,12 +24,12 @@ class FilesystemUtilTest extends \PHPUnit_Framework_TestCase
     protected $webInf;
     protected $common;
     protected $dhtml;
-    private $metaInf;
+    protected $metaInf;
 
 
     public function setUp()
     {
-        $this->properties = new Properties();
+        $this->properties = $this->getMockBuilder('AppserverIo\Properties\Properties')->setMethods(null)->getMock();
         $this->properties->add('directory', __DIR__ . '/test');
         $this->properties->add('path', 'index');
         $this->properties->add('application-name', 'testunit');

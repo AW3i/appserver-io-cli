@@ -32,7 +32,7 @@ class ProcessorCommandTest extends \PHPUnit_Framework_TestCase
         $this->directory = __DIR__ . '/test';
  
         $this->arrayInput = new ArrayInput(array('namespace' => $this->namespace, 'directory' => $this->directory));
-        $this->output = new NullOutput();
+        $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
 
         $dirNamespace = str_replace('\\', '/', $this->namespace);
 

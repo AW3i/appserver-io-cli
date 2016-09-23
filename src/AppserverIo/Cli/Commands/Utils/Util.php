@@ -16,25 +16,6 @@ use AppserverIo\Properties\PropertiesInterface;
 class Util
 {
     /**
-     * @param string $template the name of the template to find
-     *
-     * @return string
-     */
-    public static function getTemplate($template)
-    {
-        switch ($template) {
-            case DirKeys::REQUESTKEYSTEMPLATE:
-                return DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::UTILSDIR . DIRECTORY_SEPARATOR . DirKeys::REQUESTKEYSTEMPLATE;
-            case DirKeys::ACTIONTEMPLATE:
-                return DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::ACTIONDIR . DIRECTORY_SEPARATOR . DirKeys::ACTIONTEMPLATE;
-            case DirKeys::ABSTRACTPROCESSORTMEPLATE:
-                return DirKeys::DYNAMICTEMPLATES . DirKeys::METACLASSES . DirKeys::SERVICESDIR . DIRECTORY_SEPARATOR . DirKeys::ABSTRACTPROCESSORTMEPLATE;
-            default:
-                throw new \InvalidArgumentException("Template not found");
-        }
-    }
-
-    /**
      * converts backslashes to slashes in a given string
      *
      * @param string $var the variable
@@ -58,25 +39,6 @@ class Util
             return str_replace('/', '\\', $var);
         }
         return $var;
-    }
-
-    /**
-     * Validates the given arguments from a Properties object
-     *
-     * @param PropertiesInterface $args The Properties arguments to handle
-     * @throws InvalidArgumentException
-     * @return bool
-     */
-    public static function validateArguments(PropertiesInterface $args)
-    {
-        $argsArray = $args->getKeys();
-        foreach ($argsArray as $arg) {
-            if (null !== $args->getProperty($arg)) {
-                continue;
-            }
-                throw new \InvalidArgumentException("$arg not found");
-        }
-        return true;
     }
 
     /**

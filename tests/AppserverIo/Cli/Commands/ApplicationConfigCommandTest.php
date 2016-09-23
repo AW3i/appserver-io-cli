@@ -40,7 +40,7 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
         $this->applicationName = 'test-project';
         $this->namespace = 'testing\\test';
         $this->arrayInput = new ArrayInput(array('application-name' => $this->applicationName, 'namespace' => $this->namespace, 'directory' => $this->directory));
-        $this->output = new NullOutput();
+        $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
         $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
     }
 

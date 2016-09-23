@@ -10,6 +10,7 @@ use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
 use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
+use AppserverIo\Cli\Commands\AbstractCommand;
 
 /**
  * ActionCommand creates an Action.php file for an appserver web application based
@@ -20,7 +21,7 @@ use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ActionCommand extends Command
+class ActionCommand extends AbstractCommand
 {
     /**
      * Configures the current command.
@@ -62,9 +63,9 @@ class ActionCommand extends Command
         $arguments->add('directory', $input->getArgument('directory'));
         $arguments->add('class', get_called_class());
 
-        if (Util::validateArguments($arguments)) {
-            $actionTemplate = Util::getTemplate(DirKeys::ACTIONTEMPLATE);
-            $requestKeysTemplate = Util::getTemplate(DirKeys::REQUESTKEYSTEMPLATE);
+        if ($this->validateArguments($arguments)) {
+            $actionTemplate = $this->getTemplate(DirKeys::ACTIONTEMPLATE);
+            $requestKeysTemplate = $this->getTemplate(DirKeys::REQUESTKEYSTEMPLATE);
 
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 

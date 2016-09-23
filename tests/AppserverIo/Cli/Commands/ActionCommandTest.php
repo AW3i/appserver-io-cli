@@ -38,7 +38,7 @@ class ActionCommandTest extends \PHPUnit_Framework_TestCase
  
         $this->arrayInput = new ArrayInput(array('action-name' => $this->actionName, 
             'namespace' => $this->namespace, 'path' => $this->path, 'directory' => $this->directory));
-        $this->output = new NullOutput();
+        $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
 
         $dirNamespace = str_replace('\\', '/', $this->namespace);
 

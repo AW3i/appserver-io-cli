@@ -10,6 +10,7 @@ use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
 use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
+use AppserverIo\Cli\Commands\AbstractCommand;
 
 /**
  * ApplicationConfigCommand creates the main configuration files
@@ -20,7 +21,7 @@ use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ApplicationConfigCommand extends Command
+class ApplicationConfigCommand extends AbstractCommand
 {
 
     /**
@@ -65,7 +66,7 @@ class ApplicationConfigCommand extends Command
 
 
 
-        if (Util::validateArguments($arguments)) {
+        if ($this->validateArguments($arguments)) {
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
             $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
             $staticFilesDirectory = DirKeys::STATICTEMPLATES;
