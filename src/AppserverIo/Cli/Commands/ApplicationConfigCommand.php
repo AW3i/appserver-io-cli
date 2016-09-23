@@ -34,7 +34,8 @@ class ApplicationConfigCommand extends Command
             ->setDescription('Create appserver.io Config')
             ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'namespace for the project')
-            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
+            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory')
+            ->addOption('routlt-version', 'rl', InputOption::VALUE_OPTIONAL, 'the routlt version to use', '~2.0');
     }
 
     /**
@@ -60,6 +61,9 @@ class ApplicationConfigCommand extends Command
         $arguments->add('application-name', $input->getArgument('application-name'));
         $arguments->add('namespace', $input->getArgument('namespace'));
         $arguments->add('directory', $input->getArgument('directory'));
+        $arguments->add('routlt-version', $input->getOption('routlt-version'));
+
+
 
         if (Util::validateArguments($arguments)) {
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));

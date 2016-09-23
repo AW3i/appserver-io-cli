@@ -73,7 +73,14 @@ class FilesystemUtil
 
                 if (is_file($file)) {
                     $templatefile = $templateDirectory . DIRECTORY_SEPARATOR . $file;
-                    FilesystemUtil::putFile($file, $templatefile, $properties);
+                    if ($file === 'composer.json') {
+                        $tmp = $properties->getProperty('namespace');
+                        $properties->setProperty('namespace', str_replace('\\', '\\\\', $properties->getProperty('namespace')));
+                        FilesystemUtil::putFile($file, $templatefile, $properties);
+                        $properties->setProperty('namespace', $tmp);
+                    } else {
+                        FilesystemUtil::putFile($file, $templatefile, $properties);
+                    }
                 }
             }
         }
