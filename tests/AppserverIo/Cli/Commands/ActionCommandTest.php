@@ -36,9 +36,18 @@ class ActionCommandTest extends \PHPUnit_Framework_TestCase
         $this->namespace = 'testing\\test';
         $this->path = 'index';
  
-        $this->arrayInput = new ArrayInput(array('action-name' => $this->actionName, 
-            'namespace' => $this->namespace, 'path' => $this->path, 'directory' => $this->directory));
+        $this->arrayInput = $this->getMockBuilder('Symfony\Component\Console\Input\ArrayInput')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
+
+        $args = array($this->actionName, $this->namespace, $this->path, $this->directory);
+
+        $this->arrayInput->expects($this->any())->method('getArgument')->will($this->returnCallback(function($key) use (&$args) {
+                    $var = array_shift($args);
+                    return  $var;
+            }
+        ));
 
         $dirNamespace = str_replace('\\', '/', $this->namespace);
 
@@ -56,6 +65,5 @@ class ActionCommandTest extends \PHPUnit_Framework_TestCase
     }
     public function tearDown()
     {
-        FilesystemUtil::deleteFiles($this->directory . '/');
     }
 }

@@ -28,6 +28,7 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     protected $route;
     protected $applicationName;
     protected $namespace;
+    protected $routltVersion;
     protected $arrayInput;
     protected $file;
     protected $output;
@@ -36,11 +37,28 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     {
         $this->applicationConfig = new ApplicationConfigCommand();
         $this->directory = __DIR__ . DIRECTORY_SEPARATOR . 'web';
-        $this->path = 'false';
         $this->applicationName = 'test-project';
         $this->namespace = 'testing\\test';
-        $this->arrayInput = new ArrayInput(array('application-name' => $this->applicationName, 'namespace' => $this->namespace, 'directory' => $this->directory));
+        $this->routltVersion = '2.0';
+        $this->arrayInput = $this->getMockBuilder('Symfony\Component\Console\Input\ArrayInput')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
+
+        $args = array($this->applicationName, $this->namespace, $this->directory);
+
+        $options = array($this->routltVersion);
+        $this->arrayInput->expects($this->any())->method('getArgument')->will($this->returnCallback(function($key) use (&$args) {
+            $var = array_shift($args);
+            return  $var;
+        }
+        ));
+
+        $this->arrayInput->expects($this->any())->method('getOption')->will($this->returnCallback(function($key) use (&$options) {
+            $var = array_shift($options);
+            return  $var;
+        }
+        ));
         $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
     }
 

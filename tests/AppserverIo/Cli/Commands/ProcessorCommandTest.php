@@ -30,9 +30,19 @@ class ProcessorCommandTest extends \PHPUnit_Framework_TestCase
         $this->processorCommand = new ProcessorCommand();
         $this->namespace = 'testing\\test';
         $this->directory = __DIR__ . '/test';
- 
-        $this->arrayInput = new ArrayInput(array('namespace' => $this->namespace, 'directory' => $this->directory));
+        $this->arrayInput = $this->getMockBuilder('Symfony\Component\Console\Input\ArrayInput')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
+
+        $args = array('namespace' => $this->namespace, 'directory' => $this->directory);
+
+        $this->arrayInput->expects($this->any())->method('getArgument')->will($this->returnCallback(function($key) use (&$args) {
+            $var = array_shift($args);
+            return  $var;
+        }
+        ));
+
 
         $dirNamespace = str_replace('\\', '/', $this->namespace);
 
