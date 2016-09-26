@@ -13,6 +13,7 @@ use Symfony\Component\Console\Application;
  * @link      https://github.com/mohrwurm/appserver-io-cli
  * @link      http://www.appserver.io
  * @since     27.04.16
+ * @codeCoverageIgnoreEnd
  */
 class Console extends Application
 {

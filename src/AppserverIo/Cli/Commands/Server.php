@@ -15,6 +15,7 @@ use Symfony\Component\Process\Process;
  *
  * @author Martin Mohr <mohrwurm@gmail.com>
  * @since 23.04.16
+ * @codeCoverageIgnoreEnd
  */
 class Server extends Command
 {
@@ -44,7 +45,7 @@ class Server extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:server')
+        $this->setName('server')
             ->setDescription('appserver.io server commands')
             ->addArgument('action', InputArgument::REQUIRED, implode('|', $this->getAvailableArguments()))
             ->addOption('with-fpm', null, InputOption::VALUE_NONE, implode('|', $this->getAvailableArguments()) . ' appserver.io fpm daemon')

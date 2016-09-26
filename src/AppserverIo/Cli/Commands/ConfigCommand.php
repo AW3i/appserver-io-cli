@@ -19,6 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @link      https://github.com/mohrwurm/appserver-io-cli
  * @link      http://www.appserver.io
  * @since     30.04.16
+ * @codeCoverageIgnoreEnd
  */
 class ConfigCommand extends Command
 {
@@ -68,7 +69,7 @@ class ConfigCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:config')
+        $this->setName('config')
             ->setDescription('Change appserver.io server configuration (e.g. ports,documentRoot..)')
             ->addArgument('action', InputArgument::REQUIRED, implode('|', $this->getAvailableActionArguments()))
             ->addArgument('type', InputArgument::OPTIONAL, implode('|', $this->getAvailableTypeArguments()))

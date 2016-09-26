@@ -1,13 +1,4 @@
 <?php
-/**
- *
- *
- * @author    Alexandros Weigl <a.weigl@techdivision.com>
- * @copyright 2016 TechDivision GmbH <info@appserver.io>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link
- */
-
 
 namespace AppserverIo\Cli\Commands;
 
@@ -15,7 +6,16 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
+use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 
+/**
+ * Tests ApplicationConfig
+ *
+ * @author    Alexandros Weigl <a.weigl@techdivision.com>
+ * @copyright 2016 TechDivision GmbH <info@appserver.io>
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @link      https://github.com/mohrwurm/appserver-io-cli
+ */
 class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -40,7 +40,7 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
         $this->applicationName = 'test-project';
         $this->namespace = 'testing\\test';
         $this->arrayInput = new ArrayInput(array('application-name' => $this->applicationName, 'namespace' => $this->namespace, 'directory' => $this->directory));
-        $this->output = new NullOutput();
+        $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
         $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
     }
 
@@ -52,6 +52,6 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
     }
     public function tearDown()
     {
-        Util::deleteFiles($this->directory . DIRECTORY_SEPARATOR);
+        FilesystemUtil::deleteFiles($this->directory . DIRECTORY_SEPARATOR);
     }
 }

@@ -13,15 +13,15 @@ use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 use AppserverIo\Cli\Commands\AbstractCommand;
 
 /**
- * ActionCommand creates an Action.php file for an appserver web application based
- * on a template
+ * ProcessorCommand creates a processor service for an appserver
+ * webapplication based on a template
  *
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ActionCommand extends AbstractCommand
+class ProcessorCommand extends AbstractCommand
 {
     /**
      * Configures the current command.
@@ -30,11 +30,9 @@ class ActionCommand extends AbstractCommand
      */
     protected function configure()
     {
-        $this->setName('action')
-            ->setDescription('Create appserver.io Rout.Lt Action')
-            ->addArgument('action-name', InputOption::VALUE_REQUIRED, 'Action Name')
-            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'action namespace')
-            ->addArgument('path', InputOption::VALUE_REQUIRED, 'Action path')
+        $this->setName('processor')
+            ->setDescription('Create an Abstract Processor ')
+            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'processor namespace')
             ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
     }
     /**
@@ -57,25 +55,16 @@ class ActionCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $arguments = new Properties();
-        $arguments->add('action-name', $input->getArgument('action-name'));
         $arguments->add('namespace', Util::slashToBackSlash($input->getArgument('namespace')));
-        $arguments->add('path', $input->getArgument('path'));
         $arguments->add('directory', $input->getArgument('directory'));
-        $arguments->add('class', get_called_class());
 
         if ($this->validateArguments($arguments)) {
-            $actionTemplate = $this->getTemplate(DirKeys::ACTIONTEMPLATE);
-            $requestKeysTemplate = $this->getTemplate(DirKeys::REQUESTKEYSTEMPLATE);
+            $processorTemplate = $this->getTemplate(DirKeys::ABSTRACTPROCESSORTMEPLATE, $arguments->getProperty('namespace'));
 
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 
-            FilesystemUtil::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
-            if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace')) . DirKeys::REQUESTKEYS)) {
-                $path = Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace'));
-                //Set class to an empty string
-                $arguments->setProperty('class', '');
-                FilesystemUtil::putFile($path . DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);
-            }
+            $path = Util::buildDynamicDirectory($processorTemplate, $arguments->getProperty('namespace'));
+            FilesystemUtil::putFile($path . DirKeys::ABSTRACTPROCESSOR, $processorTemplate, $arguments);
         }
     }
 }

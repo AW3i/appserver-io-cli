@@ -3,24 +3,25 @@
 namespace AppserverIo\Cli\Commands;
 
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\Console\Input\InputOption;
 use AppserverIo\Cli\Commands\Utils\Util;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
+use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
+use AppserverIo\Cli\Commands\AbstractCommand;
 
 /**
- *
+ * ApplicationConfigCommand creates the main configuration files
+ * needed for an appserver webapplication
  *
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
-class ApplicationConfigCommand extends Command
+class ApplicationConfigCommand extends AbstractCommand
 {
 
     /**
@@ -30,11 +31,12 @@ class ApplicationConfigCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:appconfig')
+        $this->setName('appconfig')
             ->setDescription('Create appserver.io Config')
             ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'namespace for the project')
-            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
+            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory')
+            ->addOption('routlt-version', 'rl', InputOption::VALUE_OPTIONAL, 'the routlt version to use', '~2.0');
     }
 
     /**
@@ -60,12 +62,15 @@ class ApplicationConfigCommand extends Command
         $arguments->add('application-name', $input->getArgument('application-name'));
         $arguments->add('namespace', $input->getArgument('namespace'));
         $arguments->add('directory', $input->getArgument('directory'));
+        $arguments->add('routlt-version', $input->getOption('routlt-version'));
 
-        if (Util::validateArguments($arguments)) {
-            Util::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+
+
+        if ($this->validateArguments($arguments)) {
+            FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
             $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
             $staticFilesDirectory = DirKeys::STATICTEMPLATES;
-            Util::findFiles($staticFilesDirectory, $arguments);
+            FilesystemUtil::findFiles($staticFilesDirectory, $arguments);
         }
     }
 }

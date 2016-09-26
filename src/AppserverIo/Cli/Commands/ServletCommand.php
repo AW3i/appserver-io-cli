@@ -18,6 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @since     30.04.16
  *
  * TODO rewrite
+ * @codeCoverageIgnoreEnd
  */
 class ServletCommand extends Command
 {
@@ -28,7 +29,7 @@ class ServletCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:servlet')
+        $this->setName('servlet')
             ->setDescription('Create appserver.io Servlet')
             ->addOption('namespace', 'c', InputOption::VALUE_REQUIRED, 'servlet namespace')
             ->addOption('servlet', 's', InputOption::VALUE_REQUIRED, 'servlet name')

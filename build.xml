@@ -110,19 +110,24 @@
     <!-- ==================================================================== -->
     <!-- Creates a basic appserver project                                    -->
     <!-- ==================================================================== -->
-    <target name="create-project" description="Creas a basic appserver project">
+    <target name="create-project" description="Create a basic appserver.io project">
+        <input addProperty="appName" defaultvalue="example" message="What's the application name?" />
+        <input addProperty="namespace" defaultvalue="Example" message="And the application namespace?" />
         <exec dir="${basedir}" executable="php">
-            <arg line="bin/appserver appserver:appconfig ${appName} ${namespace} ${php-target.dir}/${appName}"/>
+            <arg line="bin/appserver appconfig ${appName} ${namespace} ${php-target.dir}/${appName}"/>
         </exec>
         <exec dir="${basedir}" executable="php">
-            <arg line="bin/appserver appserver:action index ${namespace} /index ${php-target.dir}/${appName}"/>
+            <arg line="bin/appserver action index ${namespace} /index ${php-target.dir}/${appName}"/>
+        </exec>
+        <exec dir="${php-target.dir}/${appName}" executable="composer">
+            <arg line="install"/>
         </exec>
     </target>
 
     <!-- ==================================================================== -->
     <!-- Copies the sources to the deploy directory                           -->
     <!-- ==================================================================== -->
-    <target name="deploy" description="Copies the sources to the deploy directory.">
+    <target name="local-deploy" description="Copies the sources to the deploy directory.">
         <!-- copy the sources to the deploy directory -->
         <echo message="Copy sources to ${deploy.dir} ..."/>
         <copy todir="${appserver.webapps.dir}" preservelastmodified="true" overwrite="true">
@@ -136,6 +141,7 @@
     <!-- Copies the sources to the deploy directory                           -->
     <!-- ==================================================================== -->
     <target name="docker-deploy"  description="Copies the sources to the deploy directory.">
+        <input addProperty="appName" defaultvalue="example" message="What's the application name?" />
         <!-- copy the sources to the deploy directory -->
         <exec dir="${basedir}" executable="docker-compose">
             <arg line="up -d"/>
@@ -163,27 +169,4 @@
             <arg line="rm appserveriocli_appserver_1"/>
         </exec>
     </target>
-
-
-    <!-- ==================================================================== -->
-    <!-- Creates a PHAR file for deployment                                   -->
-    <!-- ==================================================================== -->
-    <target name="create-phar" depends="copy" description="Creates a PHAR file for deployment.">
-        <!-- create the PHAR archive itself from the backup sources -->
-        <exec dir="${php-target.dir}" executable="${vendor.dir}/bin/phar">
-            <arg line="-c create -n ${php-target.dir}/${package.filename} -d ${php-target.dir}/${appserver.webapp.name}"/>
-        </exec>
-    </target>
-
-    <!-- ==================================================================== -->
-    <!-- Deploys the PHAR file into the configured deployment directory       -->
-    <!-- ==================================================================== -->
-    <target name="deploy-phar" depends="create-phar"
-            description="Deploys the PHAR file into the configured deployment directory.">
-        <copy file="${php-target.dir}/${package.filename}" tofile="${appserver.deploy.dir}/${appserver.webapp.name}.phar" failonerror="true"/>
-
-        <!-- create dodeploy flag to be transmitted via scp and do deploy on target system if needed -->
-        <touch file="${appserver.deploy.dir}/${appserver.webapp.name}.phar.dodeploy"/>
-    </target>
-
 </project>
