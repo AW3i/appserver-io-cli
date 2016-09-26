@@ -69,7 +69,7 @@ class ConfigCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:config')
+        $this->setName('config')
             ->setDescription('Change appserver.io server configuration (e.g. ports,documentRoot..)')
             ->addArgument('action', InputArgument::REQUIRED, implode('|', $this->getAvailableActionArguments()))
             ->addArgument('type', InputArgument::OPTIONAL, implode('|', $this->getAvailableTypeArguments()))

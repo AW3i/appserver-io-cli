@@ -31,7 +31,7 @@ class ApplicationConfigCommand extends AbstractCommand
      */
     protected function configure()
     {
-        $this->setName('appserver:appconfig')
+        $this->setName('appconfig')
             ->setDescription('Create appserver.io Config')
             ->addArgument('application-name', InputOption::VALUE_REQUIRED, 'config application name')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'namespace for the project')

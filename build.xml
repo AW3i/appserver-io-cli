@@ -112,10 +112,10 @@
     <!-- ==================================================================== -->
     <target name="create-project" description="Creas a basic appserver project">
         <exec dir="${basedir}" executable="php">
-            <arg line="bin/appserver appserver:appconfig ${appName} ${namespace} ${php-target.dir}/${appName}"/>
+            <arg line="bin/appserver appconfig ${appName} ${namespace} ${php-target.dir}/${appName}"/>
         </exec>
         <exec dir="${basedir}" executable="php">
-            <arg line="bin/appserver appserver:action index ${namespace} /index ${php-target.dir}/${appName}"/>
+            <arg line="bin/appserver action index ${namespace} /index ${php-target.dir}/${appName}"/>
         </exec>
         <exec dir="${php-target.dir}/${appName}" executable="composer">
             <arg line="install"/>

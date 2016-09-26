@@ -29,7 +29,7 @@ class ServletCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:servlet')
+        $this->setName('servlet')
             ->setDescription('Create appserver.io Servlet')
             ->addOption('namespace', 'c', InputOption::VALUE_REQUIRED, 'servlet namespace')
             ->addOption('servlet', 's', InputOption::VALUE_REQUIRED, 'servlet name')

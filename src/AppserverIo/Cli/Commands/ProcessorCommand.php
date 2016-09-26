@@ -30,7 +30,7 @@ class ProcessorCommand extends AbstractCommand
      */
     protected function configure()
     {
-        $this->setName('appserver:processor')
+        $this->setName('processor')
             ->setDescription('Create an Abstract Processor ')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'processor namespace')
             ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');

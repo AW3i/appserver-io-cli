@@ -30,8 +30,8 @@ class ActionCommand extends AbstractCommand
      */
     protected function configure()
     {
-        $this->setName('appserver:action')
-            ->setDescription('Create appserver.io ')
+        $this->setName('action')
+            ->setDescription('Create appserver.io Rout.Lt Action')
             ->addArgument('action-name', InputOption::VALUE_REQUIRED, 'Action Name')
             ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'action namespace')
             ->addArgument('path', InputOption::VALUE_REQUIRED, 'Action path')

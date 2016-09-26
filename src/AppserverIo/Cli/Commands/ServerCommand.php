@@ -34,7 +34,7 @@ class ServerCommand extends Command
      */
     protected function configure()
     {
-        $this->setName('appserver:server')
+        $this->setName('server')
             ->setDescription('Add/Remove appserver.io server')
             ->addOption('section', 's', InputOption::VALUE_REQUIRED, 'name of server section [http|https|message-queue]')
             ->addOption('container', 'c', InputOption::VALUE_OPTIONAL, 'server container name', 'combined-appserver')
