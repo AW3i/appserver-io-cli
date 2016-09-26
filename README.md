@@ -2,44 +2,34 @@
 [![Build Status](https://travis-ci.org/AW3i/appserver-io-cli.svg?branch=aw%2Farguments)](https://travis-ci.org/AW3i/appserver-io-cli)
 [![Coverage Status](https://coveralls.io/repos/github/AW3i/appserver-io-cli/badge.svg?branch=master)](https://coveralls.io/github/AW3i/appserver-io-cli?branch=master)
 
-## appserver:server
-> action: start | stop | restart | status
->
-> options: --with-fpm | --directory
+This tool generates a simple Rout.Lt project for apperver.io to help kick off your web application
 
+## Usage
+
+To create a simple project run
 ```bash
-$ vendor/bin/appserver appserver:server <action> [options]
+ant create-project
+```
+and then deploy it.
+
+You can either deploy it locally with
+```bash
+ant local-deploy
 ```
 
-## appserver:config
-> action: change | add | remove
-> type: parameter
->
-> options: --container | --server | --param | --value | --config | --backup
 
+or deploy it to a docker container.
+The docker container is generated on the fly and pulls the latest appserver image available, and binds to port 8080 at localhost
 ```bash
-$ vendor/bin/appserver appserver:config <action> [<type>] [options]
-```
-### appserver:config change
-
-```bash
-$ vendor/bin/appserver appserver:config change parameter --server message-queue --param workerNumber --value=4
+ant docker-deploy
 ```
 
-### appserver:config add
-
+You can also run commands without ant, for example to create a new action you would run
 ```bash
-$ vendor/bin/appserver appserver:config add parameter --server message-queue --param test --value 1
+bin/appserver action Example Example\\Namespace /path  path/to/webapp
 ```
 
-### appserver:config remove
-
+To list all available commands run
 ```bash
-$ vendor/bin/appserver appserver:config remove parameter --server message-queue --param test
-```
-
-### appserver:appconfig
-
-```bash
-$vendor/bin/appserver appserver:appconfig application-name Name\\Space webapp/directory
+bin/appserver
 ```
