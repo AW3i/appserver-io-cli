@@ -2,47 +2,54 @@
 
 namespace AppserverIo\Cli\Commands;
 
-use AppserverIo\Cli\BackupTrait;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use Symfony\Component\Process\Process;
 
 /**
- * ServerCommand
+ * Server
  *
- * @author    Martin Mohr <mohrwurm@gmail.com>
- * @copyright 2015 TechDivision GmbH <info@appserver.io>
- * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
- * @link      https://github.com/mohrwurm/appserver-io-cli
- * @link      http://www.appserver.io
- * @since     30.04.16
+ * @author Martin Mohr <mohrwurm@gmail.com>
+ * @since 23.04.16
  * @codeCoverageIgnoreEnd
- *
- * TODO rewrite
  */
 class ServerCommand extends Command
 {
-    use BackupTrait;
+    const ARG_RESTART = 'restart';
+    const ARG_START = 'start';
+    const ARG_STOP = 'stop';
+    const ARG_STATUS = 'status';
 
-    const DEFAULT_CONFIG = '/opt/appserver/etc/appserver/appserver.xml';
+    /**
+     * get available arguments
+     *
+     * @return array
+     */
+    protected function getAvailableArguments()
+    {
+        return [
+            self::ARG_RESTART,
+            self::ARG_START,
+            self::ARG_STOP,
+            self::ARG_STATUS
+        ];
+    }
 
     /**
      * Configures the current command.
-     *
      * @return null
      */
     protected function configure()
     {
         $this->setName('server')
-            ->setDescription('Add/Remove appserver.io server')
-            ->addOption('section', 's', InputOption::VALUE_REQUIRED, 'name of server section [http|https|message-queue]')
-            ->addOption('container', 'c', InputOption::VALUE_OPTIONAL, 'server container name', 'combined-appserver')
-            ->addOption('backup', 'b', InputOption::VALUE_OPTIONAL, 'do a backup of xml', false)
-            ->addOption('add', 'a', InputOption::VALUE_NONE, 'add parameter')
-            ->addOption('remove', 'r', InputOption::VALUE_NONE, 'remove parameter')
-            ->addOption('file', 'f', InputOption::VALUE_OPTIONAL, 'configuration file', self::DEFAULT_CONFIG)
-            ->addOption('template', 't', InputOption::VALUE_OPTIONAL, 'server template xml');
+            ->setDescription('appserver.io server commands')
+            ->addArgument('action', InputArgument::REQUIRED, implode('|', $this->getAvailableArguments()))
+            ->addOption('with-fpm', null, InputOption::VALUE_NONE, implode('|', $this->getAvailableArguments()) . ' appserver.io fpm daemon')
+            ->addOption('directory', null, InputOption::VALUE_OPTIONAL, 'appserver.io root directory', defined('APPSERVER_BP') ? APPSERVER_BP : '/opt/appserver');
     }
 
     /**
@@ -64,80 +71,69 @@ class ServerCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $configFile = $input->getOption('file');
-        $section = $input->getOption('section');
-        $add = $input->getOption('add');
-        $remove = $input->getOption('remove');
-        $container = $input->getOption('container');
-        $backup = $input->getOption('backup');
-        $template = $input->getOption('template');
+        $action = $input->getArgument('action');
+        if ($this->validateAction($action)) {
+            $dir = $this->getDirectory($input);
 
-        if (file_exists($configFile)) {
-            $dom = new \DOMDocument();
-            $dom->load($configFile);
-            $dom->formatOutput = true;
+            $output->writeln('<info>' . ucfirst($action) . ' appserver.io...</info>');
 
-            if (true == $backup) {
-                if ($this->doBackup($configFile)) {
-                    $output->writeln('<info>backup from "' . $configFile . '" created</info>');
-                } else {
-                    $output->writeln('<error>backup from "' . $configFile . '" failed</error>');
-
-                    return false;
-                }
+            //sudo sbin/appserverctl restart && sudo sbin/appserver-php5-fpmctl restart
+            $command = $dir . DIRECTORY_SEPARATOR . 'sbin/appserverctl ' . $action;
+            $fpm = $input->getOption('with-fpm');
+            if (true == $fpm) {
+                $command .= ' && sbin/appserver-php5-fpmctl ' . $action;
             }
 
-            $containerNodes = $dom->getElementsByTagName('container');
-            /**
- * @var $containerNodes \DOMNodeList
-*/
-            foreach ($containerNodes as $item) {
-                /**
- * @var $item \DOMElement
-*/
-                if ($container == $item->getAttribute('name')) {
-                    $serverExists = false;
-                    foreach ($item->getElementsByTagName('server') as $server) {
-                        /**
- * @var $server \DOMElement
-*/
-                        if ($section == $server->getAttribute('name')) {
-                            $serverExists = true;
-                            if (true === $remove) {
-                                $item->getElementsByTagName('servers')->item(0)->removeChild($server);
-                                $output->writeln('<info>server "' . $section . '" removed</info>');
-                            }
-                        }
-                    }
-                    if (true === $add) {
-                        if (true === $serverExists) {
-                            throw new \Exception('server "' . $section . '" aready exists');
-                        }
-
-                        if (null !== $template) {
-                            $templateFile = $template;
-                        } else {
-                            //default template file
-                            $templateFile = $servletTemplate = __DIR__ . '/../../../../templates/server.xml';
-                        }
-                        if (file_exists($templateFile)) {
-                            $search = ['{#name#}'];
-                            $replace = [$section];
-                            $templateString = str_replace($search, $replace, file_get_contents($templateFile));
-                            $domTpl = new \DOMDocument();
-                            $domTpl->loadXML($templateString);
-                            $domTpl->formatOutput = true;
-
-                            if (null !== $item->getElementsByTagName('servers')->item(0)->appendChild($dom->importNode($domTpl->firstChild, true))) {
-                                $output->writeln('<info>server "' . $section . '" added</info>');
-                            }
-                        } else {
-                            throw new FileNotFoundException('file ' . basename($templateFile) . ' not found');
-                        }
-                    }
-                }
+            $process = new Process($command);
+            try {
+                $process->mustRun();
+                $output->writeln($process->getOutput());
+            } catch (ProcessFailedException $e) {
+                $output->writeln($e->getMessage());
             }
-            $dom->save($configFile);
         }
+    }
+
+    /**
+     * validate action
+     *
+     * @param string $action the action
+     *
+     * @return bool
+     */
+    protected function validateAction($action)
+    {
+        switch ($action) {
+            case self::ARG_START:
+            case self::ARG_STOP:
+            case self::ARG_RESTART:
+            case self::ARG_STATUS:
+                return true;
+                break;
+            default:
+                throw new \InvalidArgumentException('Action not found');
+                break;
+        }
+    }
+
+    /**
+     * get appserver root directory
+     *
+     * @param InputInterface $input the input
+     *
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function getDirectory(InputInterface $input)
+    {
+        $dir = $input->getOption('directory');
+        if (!is_dir($dir)) {
+            throw new \Exception('directory "' . $dir . '" not found');
+        }
+
+        if (!is_dir($dir . DIRECTORY_SEPARATOR . 'etc' . DIRECTORY_SEPARATOR . 'appserver')) {
+            throw new \Exception('directory "' . $dir . '" is no appserver directory');
+        }
+        return $dir;
     }
 }

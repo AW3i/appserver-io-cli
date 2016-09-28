@@ -9,16 +9,17 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use AppserverIo\Properties\Properties;
 
 /**
- * Config
+ * ConfigCommand provides an interaction with the appserver.io default config file
+ * on which you can add on a specified server parameters,modify them or remove them
  *
  * @author    Martin Mohr <mohrwurm@gmail.com>
- * @copyright 2015 TechDivision GmbH <info@appserver.io>
+ * @copyright 2016 TechDivision GmbH <info@appserver.io>
  * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  * @link      http://www.appserver.io
- * @since     30.04.16
  * @codeCoverageIgnoreEnd
  */
 class ConfigCommand extends Command
@@ -72,13 +73,13 @@ class ConfigCommand extends Command
         $this->setName('config')
             ->setDescription('Change appserver.io server configuration (e.g. ports,documentRoot..)')
             ->addArgument('action', InputArgument::REQUIRED, implode('|', $this->getAvailableActionArguments()))
+            ->addArgument('server', InputArgument::REQUIRED, 'name of server [http|https|message-queue|...]')
+            ->addArgument('param', InputArgument::REQUIRED, 'parameter name')
+            ->addArgument('value', InputArgument::REQUIRED, 'parameter value')
             ->addArgument('type', InputArgument::OPTIONAL, implode('|', $this->getAvailableTypeArguments()))
             ->addOption('container', null, InputOption::VALUE_OPTIONAL, 'name of server container [system-container|combined-appserver|...]')
-            ->addOption('server', null, InputOption::VALUE_OPTIONAL, 'name of server [http|https|message-queue|...]')
-            ->addOption('param', null, InputOption::VALUE_OPTIONAL, 'parameter name')
-            ->addOption('value', null, InputOption::VALUE_OPTIONAL, 'parameter value')
             ->addOption('config', 'c', InputOption::VALUE_OPTIONAL, 'path to appserver.io configuration file', self::DEFAULT_CONFIG)
-            ->addOption('backup', 'b', InputOption::VALUE_NONE, 'create backup from appserver.io configuration file');
+            ->addOption('backup', 'b', InputOption::VALUE_OPTIONAL, 'create backup from appserver.io configuration file', false);
     }
 
     /**
@@ -100,66 +101,63 @@ class ConfigCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $action = $input->getArgument('action');
-        $type = $input->getArgument('type');
-        $container = $input->getOption('container');
-        $server = $input->getOption('server');
-        $parameter = $input->getOption('param');
-        $value = $input->getOption('value');
-        $configFile = $input->getOption('config');
-        $backup = $input->getOption('backup');
+        $arguments = new Properties();
+        $arguments->add('action', $input->getArgument('action'));
+        $arguments->add('server', $input->getArgument('server'));
+        $arguments->add('paramName', $input->getArgument('param'));
+        $arguments->add('value', $input->getArgument('value'));
+        $arguments->add('type', $input->getArgument('type'));
+        $arguments->add('container', $input->getOption('container'));
+        $arguments->add('configFile', $input->getOption('config'));
+        $arguments->add('backup', $input->getOption('backup'));
 
-        if (file_exists($configFile)) {
+        //Check if the config file exists and load it
+        if (file_exists($arguments->getProperty('configFile'))) {
             $dom = new \DOMDocument();
-            $dom->load($configFile);
             $dom->formatOutput = true;
+            $dom->preserveWhiteSpace = false;
+            $dom->load($arguments->getProperty('configFile'));
 
-            if (true == $backup) {
-                if ($this->doBackup($configFile)) {
-                    $output->writeln('<info>backup from "' . $configFile . '" created</info>');
+            //make a backup of the current file
+            if (true == $arguments->getProperty('backup')) {
+                if ($this->doBackup($arguments->getProperty('configFile'))) {
+                    $output->writeln('<info>backup from "' . $arguments->getProperty('configFile') . '" created</info>');
                 } else {
-                    $output->writeln('<error>backup from "' . $configFile . '" failed</error>');
+                    $output->writeln('<error>backup from "' . $arguments->getProperty('configFile') . '" failed</error>');
 
                     return false;
                 }
             }
 
+            //get all the servers, loop them through a foreach, look for a match for a given server name
             $serverNodes = $dom->getElementsByTagName('server');
-            /**
- * @var $serverNode \DOMNodeList
-*/
             foreach ($serverNodes as $item) {
-                /**
- * @var $item \DOMElement
-*/
-                if ($server == $item->getAttribute('name')) {
-                    if (self::ARG_ACTION_ADD == $action) {
+                if ($arguments->getProperty('server') == $item->getAttribute('name')) {
+                    //Add the parameter and value
+                    if (self::ARG_ACTION_ADD == $arguments->getProperty('action')) {
                         $params = $item->getElementsByTagName('params')->item(0);
-                        $element = $dom->createElement('param', $value);
-                        $element->setAttribute('name', $parameter);
-                        if (null !== $type) {
-                            $element->setAttribute('type', $type);
+                        $element = $dom->createElement('param', $arguments->getProperty('value'));
+                        $element->setAttribute('name', $arguments->getProperty('paramName'));
+                        if (null !== $arguments->getProperty('type')) {
+                            $element->setAttribute('type', $arguments->getProperty('type'));
                         }
                         $params->appendChild($element);
-                    } elseif (self::ARG_ACTION_REMOVE == $action) {
+                    }
+                    //Remove the parameter and value
+                    if (self::ARG_ACTION_REMOVE == $arguments->getProperty('action')) {
                         $params = $item->getElementsByTagName('params')->item(0);
-                        /**
- * @var $params \DOMElement
-*/
                         foreach ($params->getElementsByTagName('param') as $param) {
-                            /**
- * @var $param \DOMElement
-*/
-                            if ($parameter == $param->getAttribute('name')) {
+                            if ($arguments->getProperty('paramName') == $param->getAttribute('name')) {
                                 $params->removeChild($param);
                             }
                         }
-                    } else {
-                        $this->modifyParameter($item, $parameter, $value);
+                    }
+                    if (self::ARG_ACTION_CHANGE == $arguments->getProperty('action')) {
+                        $this->modifyParameter($item, $arguments->getProperty('paramName'), $arguments->getProperty('value'));
                     }
                 }
             }
-            $dom->save($configFile);
+            $dom->save($arguments->getProperty('configFile'));
         }
     }
 
@@ -175,13 +173,9 @@ class ConfigCommand extends Command
     protected function modifyParameter(\DOMElement $serverElement, $parameter, $value)
     {
         foreach ($serverElement->getElementsByTagName('param') as $param) {
-            /**
- * @var $param \DOMElement
-*/
             if ($parameter == $param->getAttribute('name')) {
                 $type = $param->getAttribute('type');
                 if (self::TYPE_INTEGER == $type && false === filter_var($value, FILTER_VALIDATE_INT)) {
-                    //check int
                     throw new \InvalidArgumentException($value . ' is not an integer');
                 } elseif (self::TYPE_BOOLEAN == $type) {
                     //check boolean

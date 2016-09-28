@@ -22,15 +22,15 @@ if (file_exists($bootstrap)) {
 }
 
 use AppserverIo\Cli\Commands\ConfigCommand;
-use AppserverIo\Cli\Commands\Server;
 use AppserverIo\Cli\Commands\ServletCommand;
 use AppserverIo\Cli\Commands\ApplicationConfigCommand;
 use AppserverIo\Cli\Commands\ActionCommand;
 use AppserverIo\Cli\Commands\ProcessorCommand;
+use AppserverIo\Cli\Commands\ServerCommand;
 
 $application = new \AppserverIo\Cli\Console();
 $application->add(new ConfigCommand());
-$application->add(new Server());
+$application->add(new ServerCommand());
 $application->add(new ServletCommand());
 $application->add(new ApplicationConfigCommand());
 $application->add(new ActionCommand());
