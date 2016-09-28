@@ -116,8 +116,8 @@ class FilesystemUtil
 
         if (!is_dir($metaInf)) {
             mkdir($metaInf, 0777, true);
-            mkdir($metaInf . DirKeys::REPOSDIR, 0777, true);
-            mkdir($metaInf . DIRECTORY_SEPARATOR .  DirKeys::SERVICESDIR, 0777, true);
+            mkdir($metaInf . DIRECTORY_SEPARATOR . DirKeys::REPOSDIR, 0777, true);
+            mkdir($metaInf . DIRECTORY_SEPARATOR . DirKeys::SERVICESDIR, 0777, true);
         }
 
         if (!is_dir($commonDir)) {

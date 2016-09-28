@@ -31,6 +31,8 @@ abstract class AbstractCommand extends Command
                 return DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::ACTIONDIR . DIRECTORY_SEPARATOR . DirKeys::ACTIONTEMPLATE;
             case DirKeys::ABSTRACTPROCESSORTMEPLATE:
                 return DirKeys::DYNAMICTEMPLATES . DirKeys::METACLASSES . DirKeys::SERVICESDIR . DIRECTORY_SEPARATOR . DirKeys::ABSTRACTPROCESSORTMEPLATE;
+            case DirKeys::ABSTRACTREPOSITORYTEMPLATE:
+                return DirKeys::DYNAMICTEMPLATES . DirKeys::METACLASSES . DirKeys::REPOSDIR . DIRECTORY_SEPARATOR . DirKeys::ABSTRACTREPOSITORYTEMPLATE;
             default:
                 throw new \InvalidArgumentException("Template not found");
         }

@@ -27,12 +27,15 @@ use AppserverIo\Cli\Commands\ServletCommand;
 use AppserverIo\Cli\Commands\ApplicationConfigCommand;
 use AppserverIo\Cli\Commands\ActionCommand;
 use AppserverIo\Cli\Commands\ProcessorCommand;
+use AppserverIo\Cli\Commands\ServerCommand;
+use AppserverIo\Cli\Commands\RepositoryCommand;
 
 $application = new \AppserverIo\Cli\Console();
 $application->add(new ConfigCommand());
-$application->add(new Server());
+$application->add(new ServerCommand());
 $application->add(new ServletCommand());
 $application->add(new ApplicationConfigCommand());
 $application->add(new ActionCommand());
-$application->add(new Processorcommand());
+$application->add(new ProcessorCommand());
+$application->add(new RepositoryCommand());
 $application->run();

@@ -23,11 +23,14 @@ class DirKeys
     const REQUESTKEYS = 'RequestKeys.php';
     const ABSTRACTPROCESSOR = 'AbstractProcessor.php';
     const ABSTRACTPROCESSORTMEPLATE = 'AbstractProcessor.php.template';
+    const ABSTRACTREPOSITORY = 'AbstractRepository.php';
+    const ABSTRACTREPOSITORYTEMPLATE = 'AbstractRepository.php.template';
 
     const WEBINF = 'WEB-INF';
     const METAINF = 'META-INF';
     const DHTML = 'dhtml';
     const SERVICESDIR = 'Services';
+    const REPOSDIR = 'Repositories';
     const ACTIONDIR = 'Actions';
     const UTILSDIR = 'Utils';
 
@@ -39,5 +42,4 @@ class DirKeys
     const METACLASSES = 'META-INF' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
     const COMMONCLASSES = 'common' . DIRECTORY_SEPARATOR . 'classes' . DIRECTORY_SEPARATOR;
     const ENTITIESDIR = DIRECTORY_SEPARATOR .'Entities';
-    const REPOSDIR = DIRECTORY_SEPARATOR .'Repositories';
 }
