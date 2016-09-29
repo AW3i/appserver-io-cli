@@ -1,7 +1,7 @@
 <?php
 
 /**
- * {$namespace}\Services\AbstractProcessor
+ * ${namespace}\Services\AbstractProcessor
  *
  * NOTICE OF LICENSE
  *
@@ -17,7 +17,7 @@
  * @link      http://www.appserver.io
  */
 
-namespace ${namespace}
+namespace ${namespace};
 
 use AppserverIo\Psr\Application\ApplicationInterface;
 
@@ -146,4 +146,3 @@ abstract class AbstractProcessor
         return $this->getSystemConfiguration()->getDatasources();
     }
 }
-

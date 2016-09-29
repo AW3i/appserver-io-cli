@@ -34,5 +34,4 @@ class IndexAction extends DispatchAction
     public function indexAction(HttpServletRequestInterface $servletRequest, HttpServletResponseInterface $servletResponse)
     {
     }
-
 }
