@@ -6,7 +6,7 @@
 
     <!-- ==================================================================== -->
     <!-- Generate a time stamp for further use in build targets               -->
-    <!-- ==================================================================== --> 
+    <!-- ==================================================================== -->
     <tstamp>
         <format property="time.stamp" pattern="yyyy-MM-dd_HHmmss"/>
     </tstamp>
@@ -71,7 +71,7 @@
     <target name="clean" description="Deletes the directory with the generated artefacts.">
         <delete dir="${php-target.dir}" includeemptydirs="true" quiet="false" verbose="true" failonerror="true"/>
     </target>
-    
+
     <!-- ==================================================================== -->
     <!-- Prepares the directory to temporarily store generated artefacts      -->
     <!-- ==================================================================== -->
@@ -125,6 +125,17 @@
         <exec dir="${php-target.dir}/${appName}" executable="composer">
             <arg line="install"/>
         </exec>
+    </target>
+
+    <!-- ==================================================================== -->
+    <!-- Copies the sources to the specified directory                        -->
+    <!-- ==================================================================== -->
+    <target name="copy-project" description="Copies project to specified directory">
+        <input addProperty="appName" defaultvalue="example" message="What's the project name?" />
+        <input addProperty="copyDir" defaultvalue="/opt/appserver/webapps/example" message="Where do you want to copy the project?" />
+        <copy todir="${copyDir}">
+            <fileset dir="${php-target.dir}/${appName}" defaultexcludes="false" />
+        </copy>
     </target>
 
     <!-- ==================================================================== -->
