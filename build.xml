@@ -119,6 +119,9 @@
         <exec dir="${basedir}" executable="php">
             <arg line="bin/appserver action index ${namespace} /index ${php-target.dir}/${appName}"/>
         </exec>
+        <exec dir="${basedir}" executable="php">
+            <arg line="bin/appserver processor ${namespace} ${php-target.dir}/${appName}"/>
+        </exec>
         <exec dir="${php-target.dir}/${appName}" executable="composer">
             <arg line="install"/>
         </exec>
