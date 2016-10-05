@@ -40,34 +40,50 @@ class ApplicationConfigTest extends \PHPUnit_Framework_TestCase
         $this->applicationName = 'test-project';
         $this->namespace = 'testing\\test';
         $this->routltVersion = '2.0';
+        $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
+
+        //Mock the original classes and disable the constructor
         $this->arrayInput = $this->getMockBuilder('Symfony\Component\Console\Input\ArrayInput')
             ->disableOriginalConstructor()
             ->getMock();
         $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
 
+        //Define an array of arguments to feed into the mocked constructor
         $args = array($this->applicationName, $this->namespace, $this->directory);
 
+        //Define an array of options to feed into the mocked constructor
         $options = array($this->routltVersion);
+
+        //mock getArgument, anonymous function takes the first argument
+        //of the array and returns it
         $this->arrayInput->expects($this->any())->method('getArgument')->will($this->returnCallback(function($key) use (&$args) {
             $var = array_shift($args);
             return  $var;
         }
         ));
 
+        //mock getOption, anonymous function takes the first option
+        //of the array and returns it
         $this->arrayInput->expects($this->any())->method('getOption')->will($this->returnCallback(function($key) use (&$options) {
             $var = array_shift($options);
             return  $var;
         }
         ));
-        $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBINF . DIRECTORY_SEPARATOR . self::WEB;
     }
 
+    /**
+     * Asserts if the file which we want to create gets created
+     * Also asserts if the file is more than zero bytes
+     *
+     * @return void
+     */
     public function testExecuteCreatesNonEmptyFile()
     {
         $this->applicationConfig->run($this->arrayInput, $this->output);
         $this->assertTrue(file_exists($this->file));
         $this->assertFalse(0 == filesize($this->file));
     }
+
     public function tearDown()
     {
         FilesystemUtil::deleteFiles($this->directory . DIRECTORY_SEPARATOR);

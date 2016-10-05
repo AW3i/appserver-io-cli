@@ -13,7 +13,7 @@ use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
 use AppserverIo\Cli\Commands\AbstractCommand;
 
 /**
- * ActionCommand creates an Action.php file for an appserver web application based
+ * ActionCommand creates a  Rout.Lt Action for an appserver web application based
  * on a template
  *
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
@@ -70,8 +70,11 @@ class ActionCommand extends AbstractCommand
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
 
             FilesystemUtil::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
+
+            //Check if RequestKeys already exists, if not create it
             if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace')) . DirKeys::REQUESTKEYS)) {
                 $path = Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace'));
+
                 //Set class to an empty string
                 $arguments->setProperty('class', '');
                 FilesystemUtil::putFile($path . DirKeys::REQUESTKEYS, $requestKeysTemplate, $arguments);

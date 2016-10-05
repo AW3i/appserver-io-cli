@@ -5,7 +5,6 @@ namespace AppserverIo\Cli\Commands\Utils;
 use AppserverIo\Cli\Commands\Utils\DirKeys;
 use AppserverIo\Properties\Properties;
 use AppserverIo\Cli\Commands\Utils\FilesystemUtil;
-use org\bovigo\vfs\vfsStream;
 
 /**
  * Tests Util

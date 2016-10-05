@@ -24,6 +24,7 @@ class AbstractCommandTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        //Initialize abstract class
         $this->stub = $this->getMockBuilder('\AppserverIo\Cli\Commands\AbstractCommand')
         ->disableOriginalConstructor()
         ->setMethods(null)

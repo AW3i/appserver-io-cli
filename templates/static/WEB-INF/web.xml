@@ -27,7 +27,7 @@
          |-->
         <init-param>
             <param-name>action.namespace</param-name>
-            <param-value>${namespace}/Actions</param-value>
+            <param-value>${action-namespace}/Actions</param-value>
         </init-param>
         <!--
          | this is optional and can be used to store credentials

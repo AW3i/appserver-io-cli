@@ -45,7 +45,7 @@ class FilesystemUtilTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * tests the create Directories method
+     * asserts if the directories are being created
      *
      * @return void
      */
@@ -59,12 +59,24 @@ class FilesystemUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(is_dir($this->common));
     }
 
+    /**
+     * This test tries to create a file and asserts if the file 
+     * was created
+     *
+     * @return void
+     */
     public function testPutFilePutsNormalFile()
     {
         FilesystemUtil::putFile($this->fileName, $this->template, $this->properties);
         $this->assertTrue(file_exists($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR . self::WEB));
     }
 
+    /**
+     * This test tries to create an Action file and asserts if it was
+     * created
+     *
+     * @return void
+     */
     public function testPutFilePutsAction()
     {
         $this->template = DirKeys::DYNAMICTEMPLATES . DirKeys::WEBCLASSES . DirKeys::ACTIONDIR. DIRECTORY_SEPARATOR . DirKeys::ACTIONTEMPLATE;
@@ -74,6 +86,12 @@ class FilesystemUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($file));
     }
 
+    /**
+     * This test tries to create a RequestKeys file and asserts if it was
+     * created
+     *
+     * @return void
+     */
     public function testPutFilePutsRequestKeys()
     {
         $this->properties->setProperty('class', get_called_class());
@@ -83,6 +101,12 @@ class FilesystemUtilTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES . $this->dirNamespace . DIRECTORY_SEPARATOR . 'Utils/RequestKeys.php'));
     }
 
+    /**
+     * This test, tries to delete directories recursively,
+     * and asserts if they were actually deleted
+     *
+     * @return void
+     */
     public function testDeleteFileDeletesRecursively()
     {
         FilesystemUtil::deleteFiles($this->properties->getProperty('directory') . DIRECTORY_SEPARATOR);

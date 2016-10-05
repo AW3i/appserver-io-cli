@@ -30,24 +30,26 @@ class ProcessorCommandTest extends \PHPUnit_Framework_TestCase
         $this->processorCommand = new ProcessorCommand();
         $this->namespace = 'testing\\test';
         $this->directory = __DIR__ . '/test';
+        $dirNamespace = str_replace('\\', '/', $this->namespace);
+        $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES
+            . $dirNamespace .'/Services/' . 'AbstractProcessor.php';
+
+        //Mock the original classes and disable the constructor
         $this->arrayInput = $this->getMockBuilder('Symfony\Component\Console\Input\ArrayInput')
             ->disableOriginalConstructor()
             ->getMock();
         $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
 
+        //Define an array of arguments to feed into the mocked constructor
         $args = array('namespace' => $this->namespace, 'directory' => $this->directory);
 
+        //mock getArgument, anonymous function takes the first argument
+        //of the array and returns it
         $this->arrayInput->expects($this->any())->method('getArgument')->will($this->returnCallback(function($key) use (&$args) {
             $var = array_shift($args);
             return  $var;
         }
         ));
-
-
-        $dirNamespace = str_replace('\\', '/', $this->namespace);
-
-        $this->file = $this->directory . DIRECTORY_SEPARATOR . DirKeys::METACLASSES
-            . $dirNamespace .'/Services/' . 'AbstractProcessor.php';
     }
 
     public function testExecuteCreatesProcessor()
@@ -57,6 +59,6 @@ class ProcessorCommandTest extends \PHPUnit_Framework_TestCase
     }
     public function tearDown()
     {
-        FilesystemUtil::deleteFiles($this->directory . '/');
+        FilesystemUtil::deleteFiles($this->directory . DIRECTORY_SEPARATOR);
     }
 }

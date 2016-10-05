@@ -63,14 +63,17 @@ class ApplicationConfigCommand extends AbstractCommand
         $arguments->add('namespace', $input->getArgument('namespace'));
         $arguments->add('directory', $input->getArgument('directory'));
         $arguments->add('routlt-version', $input->getOption('routlt-version'));
+        $arguments->add('action-namespace', Util::backslashToSlash($input->getArgument('namespace')));
 
 
 
         if ($this->validateArguments($arguments)) {
             FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+
+            //Make the directory Property use a realpath
             $arguments->setProperty('directory', realpath($arguments->getProperty('directory')));
-            $staticFilesDirectory = DirKeys::STATICTEMPLATES;
-            FilesystemUtil::findFiles($staticFilesDirectory, $arguments);
+
+            FilesystemUtil::findFiles(DirKeys::STATICTEMPLATES, $arguments);
         }
     }
 }

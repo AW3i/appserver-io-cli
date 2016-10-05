@@ -12,7 +12,7 @@ use AppserverIo\Properties\PropertiesInterface;
  *
  * @author    Alexandros Weigl <a.weigl@techdivision.com>
  * @copyright 2016 TechDivision GmbH <info@appserver.io>
- t @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
+ * @license   http://opensource.org/licenses/osl-3.0.php Open Software License (OSL 3.0)
  * @link      https://github.com/mohrwurm/appserver-io-cli
  */
 abstract class AbstractCommand extends Command

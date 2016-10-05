@@ -35,26 +35,28 @@ class ActionCommandTest extends \PHPUnit_Framework_TestCase
         $this->directory = __DIR__ . '/test';
         $this->namespace = 'testing\\test';
         $this->path = 'index';
- 
+        $dirNamespace = str_replace('\\', '/', $this->namespace);
+        $this->actionFile = $this->directory . DIRECTORY_SEPARATOR .  DirKeys::WEBCLASSES
+            . $dirNamespace .'/Actions/' . ucfirst($this->actionName) . 'Action.php';
+        $this->requestKeysFile = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES
+            . $dirNamespace .'/Utils/' . 'RequestKeys.php';
+
+        //Mock the original classes and disable the constructor
         $this->arrayInput = $this->getMockBuilder('Symfony\Component\Console\Input\ArrayInput')
             ->disableOriginalConstructor()
             ->getMock();
         $this->output = $this->getMockBuilder('Symfony\Component\Console\Output\NullOutput')->getMock();
 
+        //Define an array of arguments to feed into the mocked constructor
         $args = array($this->actionName, $this->namespace, $this->path, $this->directory);
 
+        //mock getArgument, anonymous function takes the first argument
+        //of the array and returns it
         $this->arrayInput->expects($this->any())->method('getArgument')->will($this->returnCallback(function($key) use (&$args) {
                     $var = array_shift($args);
                     return  $var;
             }
         ));
-
-        $dirNamespace = str_replace('\\', '/', $this->namespace);
-
-        $this->actionFile = $this->directory . DIRECTORY_SEPARATOR .  DirKeys::WEBCLASSES 
-            . $dirNamespace .'/Actions/' . ucfirst($this->actionName) . 'Action.php';
-        $this->requestKeysFile = $this->directory . DIRECTORY_SEPARATOR . DirKeys::WEBCLASSES 
-            . $dirNamespace .'/Utils/' . 'RequestKeys.php';
     }
 
     public function testExecuteCreatesActionAndRequestKeys()
@@ -63,7 +65,9 @@ class ActionCommandTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue(file_exists($this->actionFile));
         $this->assertTrue(file_exists($this->requestKeysFile));
     }
+
     public function tearDown()
     {
+        FilesystemUtil::deleteFiles($this->directory . DIRECTORY_SEPARATOR);
     }
 }
