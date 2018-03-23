@@ -31,11 +31,15 @@ class ActionCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName('action')
-            ->setDescription('Create appserver.io Rout.Lt Action')
-            ->addArgument('action-name', InputOption::VALUE_REQUIRED, 'Action Name')
-            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'action namespace')
-            ->addArgument('path', InputOption::VALUE_REQUIRED, 'Action path')
-            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
+            ->setDescription('Create an appserver.io Rout.Lt Action')
+            ->addArgument('action-name', InputOption::VALUE_REQUIRED, 'The name of the Action to create')
+            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'The namespace of the Action')
+            ->addArgument(
+                'path',
+                InputOption::VALUE_REQUIRED,
+                'The path on which the action can be found when querying it on a web client'
+            )
+            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'The directory of the Appserver Web Application');
     }
     /**
      * Executes the current command.
@@ -67,12 +71,22 @@ class ActionCommand extends AbstractCommand
             $actionTemplate = $this->getTemplate(DirKeys::ACTIONTEMPLATE);
             $requestKeysTemplate = $this->getTemplate(DirKeys::REQUESTKEYSTEMPLATE);
 
-            FilesystemUtil::createDirectories($arguments->getProperty('directory'), $arguments->getProperty('namespace'));
+            FilesystemUtil::createDirectories(
+                $arguments->getProperty('directory'),
+                $arguments->getProperty('namespace')
+            );
 
             FilesystemUtil::putFile($arguments->getProperty('action-name'), $actionTemplate, $arguments);
 
             //Check if RequestKeys already exists, if not create it
-            if (!is_file($arguments->getProperty('directory') . DIRECTORY_SEPARATOR . Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace')) . DirKeys::REQUESTKEYS)) {
+            if (!is_file(
+                $arguments->getProperty('directory') . DIRECTORY_SEPARATOR .
+                Util::buildDynamicDirectory(
+                    $requestKeysTemplate,
+                    $arguments->getProperty('namespace')
+                ) . DirKeys::REQUESTKEYS
+            )
+            ) {
                 $path = Util::buildDynamicDirectory($requestKeysTemplate, $arguments->getProperty('namespace'));
 
                 //Set class to an empty string

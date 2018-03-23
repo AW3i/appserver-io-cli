@@ -32,8 +32,8 @@ class ProcessorCommand extends AbstractCommand
     {
         $this->setName('processor')
             ->setDescription('Create an Abstract Processor ')
-            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'processor namespace')
-            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'webapps root directory');
+            ->addArgument('namespace', InputOption::VALUE_REQUIRED, 'The namespace of the Processor')
+            ->addArgument('directory', InputOption::VALUE_REQUIRED, 'The directory of the Appserver Web Application');
     }
     /**
      * Executes the current command.
